@@ -1,5 +1,4 @@
 #pragma once
-#include "hello_imgui/icons_font_awesome_4.h"
 
 class AboutWindow
 {

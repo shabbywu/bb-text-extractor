@@ -1,7 +1,7 @@
 #include "hello_imgui/hello_imgui.h"
-#include "hello_imgui/icons_font_awesome_4.h"
 #include "imgui_utilities/imFileDialog.h"
 #include "ToolsWindow.h"
+#include "../text-extractor/binding.h"
 
 
 void ToolsWindow::gui() {
@@ -25,7 +25,7 @@ void ToolsWindow::gui() {
 
     if (state->dataDir.string().length() > 0 && state->destDir.string().length() > 0) {
         if (ImGui::Button(ICON_FA_PLAY " 提取文本")) {
-
+            run_python();
         }
     } else {
         ImGui::BeginDisabled();

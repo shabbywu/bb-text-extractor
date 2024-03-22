@@ -1,0 +1,15 @@
+{
+  "dependencies": [
+    "freetype",
+    "physfs",
+    "pybind11",
+    "python3",
+    {
+      "name": "hello-imgui",
+      "features": [
+        "opengl3-binding",
+        "glfw-binding"
+      ]
+    }
+  ]
+}

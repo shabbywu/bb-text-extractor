@@ -10,4 +10,4 @@ file(
 add_library(imgui_utilities STATIC ${source_imgui_utilities})
 target_include_directories(imgui_utilities PUBLIC ${textedit_dir} ${fplus_dir}
                                                   ${imgui_markdown_dir})
-target_link_libraries(imgui_utilities PRIVATE hello_imgui)
+target_link_libraries(imgui_utilities PRIVATE hello-imgui::hello_imgui)

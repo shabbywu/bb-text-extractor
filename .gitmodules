@@ -10,6 +10,6 @@
 [submodule "external/ImGuiColorTextEdit"]
     path = external/ImGuiColorTextEdit
     url = https://github.com/BalazsJako/ImGuiColorTextEdit.git
-[submodule "external/pybind11"]
-	path = external/pybind11
-	url = https://github.com/pybind/pybind11.git
+[submodule "external/physfs.py"]
+	path = external/physfs.py
+	url = https://github.com/shabbywu/physfs.py.git

@@ -10,6 +10,6 @@ build:
 else
 build:
 	mkdir -p build
-	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DHELLOIMGUI_MACOS_NO_BUNDLE="ON" -DHELLOIMGUI_USE_FREETYPE="OFF" -B build
+	cmake --preset=default
 	cmake --build build --config Release -v
 endif

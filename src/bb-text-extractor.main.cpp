@@ -117,8 +117,11 @@ int main(int , char *[])
     runnerParams.callbacks.ShowAppMenuItems = []{
         HelloImGui::DockableWindow *consoleWindow =
             runnerParams.dockingParams.dockableWindowOfName("终端");
-        if (ImGui::MenuItem("打开终端"))
-            consoleWindow->isVisible = true;
+        if (!consoleWindow->isVisible) {
+            if (ImGui::MenuItem("打开终端"))
+                consoleWindow->isVisible = true;
+        }
+
     };
 
     runnerParams.callbacks.ShowMenus = []{
