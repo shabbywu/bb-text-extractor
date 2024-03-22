@@ -1,6 +1,6 @@
-# hello_imgui_template: get started with HelloImGui in 5 minutes 
+# hello_imgui_template: get started with HelloImGui in 5 minutes
 
-This template demonstrates how to easily integrate HelloImGui to your own project. 
+This template demonstrates how to easily integrate HelloImGui to your own project.
 
 You can use it as a starting point for your own project.
 
@@ -42,21 +42,21 @@ hello_imgui_add_app(hello_world hello_world.main.cpp)
 
 
 ### Assets folder structure
- 
 
-Anything in the assets/ folder located beside the app's CMakeLists will be bundled 
+
+Anything in the assets/ folder located beside the app's CMakeLists will be bundled
 together with the app (for macOS, iOS, Android, Emscripten).
-The files in assets/app_settings/ will be used to generate the app icon, 
+The files in assets/app_settings/ will be used to generate the app icon,
 and the app settings.
 
 ```
 assets/
-├── world.jpg                   # A custom asset. Any file or folder here will be deployed 
+├── world.jpg                   # A custom asset. Any file or folder here will be deployed
 │                               # with the app.
 ├── fonts/
 │    ├── DroidSans.ttf           # Default fonts used by HelloImGui
 │    └── fontawesome-webfont.ttf # (if not found, the default ImGui font will be used)
-│               
+│
 ├── app_settings/               # Application settings
 │    ├── icon.png               # This will be the app icon, it should be square
 │    │                          # and at least 256x256. It will  be converted
@@ -68,16 +68,16 @@ assets/
 │    │      └── ios/             # iOS specific settings: storyboard
 │    │        └── LaunchScreen.storyboard
 │    │
-│    ├── android/                # Android app settings: any file placed here will be deployed 
+│    ├── android/                # Android app settings: any file placed here will be deployed
 │    │   │── AndroidManifest.xml # (Optional manifest, HelloImGui will generate one if missing)
-│    │   └── res/                
+│    │   └── res/
 │    │       └── mipmap-xxxhdpi/ # Optional icons for different resolutions
-│    │           └── ...         # Use Android Studio to generate them: 
+│    │           └── ...         # Use Android Studio to generate them:
 │    │                           # right click on res/ => New > Image Asset
 │    └── emscripten/
 │      ├── shell.emscripten.html # Emscripten shell file
 │      │                         #   (this file will be cmake "configured"
-│      │                         #    to add the name and favicon) 
+│      │                         #    to add the name and favicon)
 │      └── custom.js             # Any custom file here will be deployed
 │                                #   in the emscripten build folder
 ```
@@ -142,7 +142,7 @@ git clone https://github.com/pthom/hello_imgui.git
 cd ..
 ```
 
-Notes: 
+Notes:
 * `external/` is mentioned in .gitignore
 * the main CMakeList will detect the presence of hello_imgui in `external/hello_imgui`, and will use it instead of downloading it.
 

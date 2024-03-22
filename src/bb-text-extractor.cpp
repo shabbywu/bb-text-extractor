@@ -9,6 +9,7 @@
 #include "AboutWindow.h"
 #include "UsageWindow.h"
 #include "ToolsWindow.h"
+#include "ConsoleWindow.h"
 
 HelloImGui::RunnerParams runnerParams;
 AppState state;
@@ -18,23 +19,25 @@ int main(int , char *[])
     AboutWindow aboutWindow(&runnerParams);
     UsageWindow usageWindow;
     ToolsWindow toolsWindow(&state);
-
-    //
-    // Below, we will define all our application parameters and callbacks
-    // before starting it.
-    //
-    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_DarculaDarker;
+    ConsoleWindow consoleWindow;
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "战场兄弟文本提取器";
     runnerParams.appWindowParams.windowGeometry.size = {600, 480};
 
+    //
+    // Below, we will define all our application parameters and callbacks
+    // before starting it.
+    //
+    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsLight;
     // ImGui window params
     runnerParams.imGuiWindowParams.defaultImGuiWindowType =
             HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
+    runnerParams.imGuiWindowParams.showMenu_View = false;
     runnerParams.imGuiWindowParams.showMenuBar = true;
     runnerParams.imGuiWindowParams.showStatusBar = true;
     runnerParams.imGuiWindowParams.showStatus_Fps = false;
+    runnerParams.imGuiWindowParams.enableViewports = true;
 
     // Split the screen in two parts (two "DockSpaces")
     // This will split the preexisting default dockspace "MainDockSpace"
@@ -42,7 +45,9 @@ int main(int , char *[])
     // "MainDockSpace" will be on the left, "CodeSpace" will be on the right
     // and occupy 65% of the app width.
     runnerParams.dockingParams.dockingSplits = {
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.65f },
+        { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f, ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit},
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f },
+
     };
 
     // Set the custom fonts
@@ -63,7 +68,19 @@ int main(int , char *[])
             dock_tools.isVisible = true;
             dock_tools.includeInViewMenu = false;
             dock_tools.canBeClosed = false;
+            dock_tools.rememberIsVisible = false;
             dock_tools.GuiFunction = [&toolsWindow] { toolsWindow.gui(); };
+        };
+
+        HelloImGui::DockableWindow dock_console;
+        {
+            dock_console.label = "终端";
+            dock_console.dockSpaceName = "ConsoleSpace";
+            dock_console.isVisible = true;
+            dock_console.includeInViewMenu = false;
+            dock_console.canBeClosed = false;
+            dock_console.rememberIsVisible = false;
+            dock_console.GuiFunction = [&consoleWindow, &dock_console] { consoleWindow.gui("终端", &dock_console.isVisible); };
         };
 
         HelloImGui::DockableWindow dock_usage;
@@ -90,12 +107,20 @@ int main(int , char *[])
         //
         runnerParams.dockingParams.dockableWindows = {
             dock_tools,
+            dock_console,
             dock_usage,
             dock_about
         };
     }
 
     // Set the app menu
+    runnerParams.callbacks.ShowAppMenuItems = []{
+        HelloImGui::DockableWindow *consoleWindow =
+            runnerParams.dockingParams.dockableWindowOfName("终端");
+        if (ImGui::MenuItem("打开终端"))
+            consoleWindow->isVisible = true;
+    };
+
     runnerParams.callbacks.ShowMenus = []{
         HelloImGui::DockableWindow *aboutWindow =
             runnerParams.dockingParams.dockableWindowOfName("关于");
@@ -103,7 +128,7 @@ int main(int , char *[])
         HelloImGui::DockableWindow *usageWindow =
             runnerParams.dockingParams.dockableWindowOfName("使用说明");
 
-        if (ImGui::BeginMenu("链接 & 关于"))
+        if (ImGui::BeginMenu("链接"))
         {
             ImGui::TextDisabled("链接");
             if (ImGui::MenuItem("汉化项目主仓库"))
@@ -112,10 +137,10 @@ int main(int , char *[])
                 HyperlinkHelper::OpenUrl("https://paratranz.cn/projects/7032");
             if (ImGui::MenuItem("战场兄弟汉化发布"))
                 HyperlinkHelper::OpenUrl("https://battle-brothers-cn.shabbywu.cn/");
-
-            ImGui::Separator();
-            ImGui::TextDisabled("关于本工具");
-            if (ImGui::MenuItem("关于"))
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("关于")) {
+            if (ImGui::MenuItem("关于本工具"))
                 aboutWindow->isVisible = true;
             if (ImGui::MenuItem("使用说明"))
                 usageWindow->isVisible = true;
@@ -148,7 +173,7 @@ int main(int , char *[])
 
         return (void*)tex;
     };
-    
+
     ifd::FileDialog::Instance().DeleteTexture = [](void* tex) {
         GLuint texID = (GLuint)(size_t)(tex);
         glDeleteTextures(1, &texID);

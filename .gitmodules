@@ -1,12 +1,15 @@
 [submodule "external/imgui_markdown"]
-	path = external/imgui_markdown
-	url = https://github.com/juliettef/imgui_markdown.git
+    path = external/imgui_markdown
+    url = https://github.com/juliettef/imgui_markdown.git
 [submodule "external/FunctionalPlus"]
-	path = external/FunctionalPlus
-	url = https://github.com/Dobiasd/FunctionalPlus.git
+    path = external/FunctionalPlus
+    url = https://github.com/Dobiasd/FunctionalPlus.git
 [submodule "external/hello_imgui"]
-	path = external/hello_imgui
-	url = https://github.com/pthom/hello_imgui.git
+    path = external/hello_imgui
+    url = https://github.com/pthom/hello_imgui.git
 [submodule "external/ImGuiColorTextEdit"]
-	path = external/ImGuiColorTextEdit
-	url = https://github.com/BalazsJako/ImGuiColorTextEdit.git
+    path = external/ImGuiColorTextEdit
+    url = https://github.com/BalazsJako/ImGuiColorTextEdit.git
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11.git

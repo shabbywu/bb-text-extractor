@@ -1,10 +1,11 @@
 #include "hello_imgui/hello_imgui.h"
+#include "hello_imgui/icons_font_awesome_4.h"
 #include "imgui_utilities/imFileDialog.h"
 #include "ToolsWindow.h"
 
 
 void ToolsWindow::gui() {
-    if (ImGui::Button("选择游戏目录", ImVec2(0, 40)))
+    if (ImGui::Button(ICON_FA_FILE " 选择游戏目录", ImVec2(0, 40)))
         ifd::FileDialog::Instance().Open("选择游戏目录", "选择游戏目录", "");
 
     if (state->dataDir.string().length() > 0) {
@@ -13,7 +14,7 @@ void ToolsWindow::gui() {
         ImGui::TextWrapped(state->dataDir.string().c_str());
     }
 
-    if (ImGui::Button("选择输出目录", ImVec2(0, 40)))
+    if (ImGui::Button(ICON_FA_FILE " 选择输出目录", ImVec2(0, 40)))
         ifd::FileDialog::Instance().Open("选择输出目录", "选择输出目录", "");
 
     if (state->destDir.string().length() > 0) {
@@ -23,16 +24,16 @@ void ToolsWindow::gui() {
     }
 
     if (state->dataDir.string().length() > 0 && state->destDir.string().length() > 0) {
-        if (ImGui::Button("提取文本")) {
+        if (ImGui::Button(ICON_FA_PLAY " 提取文本")) {
 
         }
     } else {
         ImGui::BeginDisabled();
-        ImGui::Button("提取文本", ImVec2(0, 40));
+        ImGui::Button(ICON_FA_PLAY " 提取文本", ImVec2(0, 40));
         ImGui::SetItemTooltip("请先设置游戏目录和输出目录");
         ImGui::EndDisabled();
     }
-    
+
     if (ifd::FileDialog::Instance().IsDone("选择游戏目录")) {
         if (ifd::FileDialog::Instance().HasResult()) {
             state->dataDir = ifd::FileDialog::Instance().GetResult();

@@ -15,7 +15,7 @@ namespace ImGuiExt
             ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         return (ImGui::IsItemHovered() && ImGui::IsMouseDown(0));
     }
-    
+
     void SameLine_IfPossible(float minRightMargin)
     {
         auto lastXPos = ImGui::GetItemRectMax().x - ImGui::GetWindowPos().x;

@@ -12,5 +12,3 @@ namespace SourceParse
         const LineWithTag& treeTopLeaf = { -1, "Table Of Content", -1} );
 
 } // namespace SourceParse
-
-

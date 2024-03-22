@@ -65,5 +65,3 @@ namespace SourceParse
 
 
 } // namespace SourceParse
-
-
