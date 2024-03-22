@@ -1,5 +1,5 @@
-add_subdirectory(imgui_utilities)
-add_subdirectory(source_parse)
+add_subdirectory(ui/imgui_utilities)
+add_subdirectory(ui/source_parse)
 
 include(FindPkgConfig)
 
@@ -7,7 +7,8 @@ pkg_check_modules(GLFW3 REQUIRED glfw3)
 find_package(OpenGL REQUIRED)
 
 file(GLOB sources_bb_text_extractor ${CMAKE_CURRENT_LIST_DIR}/*.h
-     ${CMAKE_CURRENT_LIST_DIR}/*.cpp)
+     ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/ui/*.h
+     ${CMAKE_CURRENT_LIST_DIR}/ui/*.cpp)
 
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${CMAKE_CURRENT_LIST_DIR}/../assets)

@@ -1,6 +1,6 @@
 #pragma once
-#include "source_parse/Tree.h"
-#include "source_parse/Sources.h"
+#include "Tree.h"
+#include "Sources.h"
 
 namespace SourceParse
 {

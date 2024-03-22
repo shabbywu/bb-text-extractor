@@ -1,15 +1,15 @@
 #include "hello_imgui/hello_imgui.h"
 #include "hello_imgui/hello_imgui_include_opengl.h"
-#include "imgui_utilities/HyperlinkHelper.h"
-#include "imgui_utilities/MarkdownHelper.h"
-#include "imgui_utilities/FontLoader.h"
-#include "imgui_utilities/imFileDialog.h"
+#include "ui/imgui_utilities/HyperlinkHelper.h"
+#include "ui/imgui_utilities/MarkdownHelper.h"
+#include "ui/imgui_utilities/FontLoader.h"
+#include "ui/imgui_utilities/imFileDialog.h"
 
-#include "AppState.h"
-#include "AboutWindow.h"
-#include "UsageWindow.h"
-#include "ToolsWindow.h"
-#include "ConsoleWindow.h"
+#include "ui/AppState.h"
+#include "ui/AboutWindow.h"
+#include "ui/UsageWindow.h"
+#include "ui/ToolsWindow.h"
+#include "ui/ConsoleWindow.h"
 
 HelloImGui::RunnerParams runnerParams;
 AppState state;
