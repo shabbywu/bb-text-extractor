@@ -29,32 +29,25 @@ int main(int , char *[])
     // Below, we will define all our application parameters and callbacks
     // before starting it.
     //
-    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsLight;
+    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsClassic;
+    runnerParams.imGuiWindowParams.tweakedTheme.Tweaks.AlphaMultiplier = 0.5f;
     // ImGui window params
     runnerParams.imGuiWindowParams.defaultImGuiWindowType =
             HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
-    runnerParams.imGuiWindowParams.showMenu_View = false;
+    runnerParams.imGuiWindowParams.showMenu_View = true;
     runnerParams.imGuiWindowParams.showMenuBar = true;
     runnerParams.imGuiWindowParams.showStatusBar = true;
     runnerParams.imGuiWindowParams.showStatus_Fps = false;
     runnerParams.imGuiWindowParams.enableViewports = true;
+    runnerParams.imGuiWindowParams.backgroundColor = {0,0,1,1};
 
-    // Split the screen in two parts (two "DockSpaces")
-    // This will split the preexisting default dockspace "MainDockSpace"
-    // in two parts:
-    // "MainDockSpace" will be on the left, "CodeSpace" will be on the right
-    // and occupy 65% of the app width.
     runnerParams.dockingParams.dockingSplits = {
-        { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f, ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit},
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f },
-
+        { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f,
+        // ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
+        },
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f,},
     };
-
-    // Set the custom fonts
-    runnerParams.callbacks.LoadAdditionalFonts = []() {
-      FontLoader::LoadDefaultFont();
-      MarkdownHelper::LoadFonts();
-    };
+    runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiWindowFlags_DockNodeHost;
 
     //
     // Dockable windows definitions
@@ -70,6 +63,7 @@ int main(int , char *[])
             dock_tools.canBeClosed = false;
             dock_tools.rememberIsVisible = false;
             dock_tools.GuiFunction = [&toolsWindow] { toolsWindow.gui(); };
+            dock_tools.callBeginEnd = true;
         };
 
         HelloImGui::DockableWindow dock_console;
@@ -81,6 +75,7 @@ int main(int , char *[])
             dock_console.canBeClosed = false;
             dock_console.rememberIsVisible = false;
             dock_console.GuiFunction = [&consoleWindow, &dock_console] { consoleWindow.gui("终端", &dock_console.isVisible); };
+            dock_console.callBeginEnd = true;
         };
 
         HelloImGui::DockableWindow dock_usage;
@@ -90,6 +85,7 @@ int main(int , char *[])
             dock_usage.isVisible = false;
             dock_usage.includeInViewMenu = false;
             dock_usage.GuiFunction = [&usageWindow] { usageWindow.gui(); };
+            dock_usage.callBeginEnd = true;
         };
 
         HelloImGui::DockableWindow dock_about;
@@ -99,8 +95,8 @@ int main(int , char *[])
             dock_about.isVisible = true;
             dock_about.includeInViewMenu = false;
             dock_about.GuiFunction = [&aboutWindow] { aboutWindow.gui(); };
+            dock_about.callBeginEnd = true;
         };
-
 
         //
         // Set our app dockable windows list
@@ -109,9 +105,17 @@ int main(int , char *[])
             dock_tools,
             dock_console,
             dock_usage,
-            dock_about
+            dock_about,
         };
     }
+
+    runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiDockNodeFlags_NoDockingSplit;
+
+    // Set the custom fonts
+    runnerParams.callbacks.LoadAdditionalFonts = []() {
+      FontLoader::LoadDefaultFont();
+      MarkdownHelper::LoadFonts();
+    };
 
     // Set the app menu
     runnerParams.callbacks.ShowAppMenuItems = []{
@@ -121,9 +125,9 @@ int main(int , char *[])
             if (ImGui::MenuItem("打开终端"))
                 consoleWindow->isVisible = true;
         }
-
     };
 
+    // set menus
     runnerParams.callbacks.ShowMenus = []{
         HelloImGui::DockableWindow *aboutWindow =
             runnerParams.dockingParams.dockableWindowOfName("关于");
@@ -159,6 +163,21 @@ int main(int , char *[])
     runnerParams.callbacks.ShowStatus = [] {
         //MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
         MarkdownHelper::Markdown("战场兄弟文本提取器 - [shabbywu](https://github.com/shabbywu/) - [让战团从拾荣光](https://paratranz.cn/projects/7032)");
+    };
+
+    // disable dark style
+    runnerParams.callbacks.SetupImGuiStyle = HelloImGui::EmptyVoidFunction;
+    runnerParams.callbacks.BeforeImGuiRender = [] {
+        auto viewport = ImGui::GetMainViewport();
+        auto pos = viewport->Pos;
+        auto size = viewport->Size;
+        ImGui::SetNextWindowViewport(viewport->ID);
+        ImGui::SetNextWindowPos(ImVec2(pos[0] - 10, pos[1] - 10));
+        ImGui::SetNextWindowSize(ImVec2(size[0] + 20, size[1] + 20));
+        ImGui::Begin("Background", NULL, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs);
+        HelloImGui::ImageFromAsset("loading_screen_02.jpeg", ImVec2(size[0] + 20, size[1] + 20));
+        ImGui::End();
+        // glClear(GL_COLOR_BUFFER_BIT);
     };
 
     ifd::FileDialog::Instance().CreateTexture = [](uint8_t* data, int w, int h, char fmt) -> void* {

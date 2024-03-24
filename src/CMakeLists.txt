@@ -14,7 +14,8 @@ file(GLOB sources_bb_text_extractor ${CMAKE_CURRENT_LIST_DIR}/*.h
 
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${CMAKE_CURRENT_LIST_DIR}/../assets)
-target_link_libraries(bb_text_extractor PUBLIC imgui_utilities source_parse text_extractor_core)
+target_link_libraries(bb_text_extractor PUBLIC imgui_utilities source_parse
+                                               text_extractor_core)
 target_include_directories(
   bb_text_extractor
   PUBLIC ${GLFW3_INCLUDE_DIRS} ${textedit_dir} ${fplus_dir}
