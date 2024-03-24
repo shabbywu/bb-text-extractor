@@ -25,7 +25,7 @@ void ToolsWindow::gui() {
 
     if (state->dataDir.string().length() > 0 && state->destDir.string().length() > 0) {
         if (ImGui::Button(ICON_FA_PLAY " 提取文本")) {
-            run_python();
+            dispatch_extractor(state);
         }
     } else {
         ImGui::BeginDisabled();

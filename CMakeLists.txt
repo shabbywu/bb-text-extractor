@@ -4,9 +4,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Build hello_imgui
 # =================
-# via vcpkg i/ You can install hello_imgui via vcpkg with: vcpkg
-# install "hello-imgui[opengl3-binding,glfw-binding]" ii/ Then you can use it
-# inside CMake with: 
+# via vcpkg i/ You can install hello_imgui via vcpkg with: vcpkg install
+# "hello-imgui[opengl3-binding,glfw-binding]" ii/ Then you can use it inside
+# CMake with:
 find_package(hello-imgui CONFIG REQUIRED)
 
 # Build your app
@@ -14,7 +14,8 @@ find_package(hello-imgui CONFIG REQUIRED)
 set(textedit_dir ${CMAKE_CURRENT_LIST_DIR}/external/ImGuiColorTextEdit)
 set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui_markdown)
-set(physfs_py_dir ${CMAKE_CURRENT_LIST_DIR}/external/physfs.py)
+set(memory_importer_dir
+    ${CMAKE_CURRENT_LIST_DIR}/external/python-memory-importer)
 add_subdirectory(src)
 
 # hello_imgui_add_app is a helper function, similar to cmake's "add_executable"

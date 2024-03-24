@@ -10,6 +10,6 @@
 [submodule "external/ImGuiColorTextEdit"]
     path = external/ImGuiColorTextEdit
     url = https://github.com/BalazsJako/ImGuiColorTextEdit.git
-[submodule "external/physfs.py"]
-	path = external/physfs.py
-	url = https://github.com/shabbywu/physfs.py.git
+[submodule "external/python-memory-importer"]
+    path = external/python-memory-importer
+    url = https://github.com/shabbywu/python-memory-importer.git

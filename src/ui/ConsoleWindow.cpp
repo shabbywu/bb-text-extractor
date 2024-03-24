@@ -1,7 +1,10 @@
 #include "ConsoleWindow.h"
 
 
-ConsoleWindow::ConsoleWindow() {
+ConsoleWindow::ConsoleWindow(AppState *state) {
+        state->addLog = [this](std::string message) {
+            this->AddLog(message.c_str());
+        };
         ClearLog();
         memset(InputBuf, 0, sizeof(InputBuf));
         HistoryPos = -1;

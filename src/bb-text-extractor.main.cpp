@@ -1,3 +1,6 @@
+#include <chrono>
+#include <thread>
+
 #include "hello_imgui/hello_imgui.h"
 #include "hello_imgui/hello_imgui_include_opengl.h"
 #include "ui/imgui_utilities/HyperlinkHelper.h"
@@ -10,7 +13,9 @@
 #include "ui/UsageWindow.h"
 #include "ui/ToolsWindow.h"
 #include "ui/ConsoleWindow.h"
+#include "text-extractor/binding.h"
 
+using namespace std::chrono_literals;
 HelloImGui::RunnerParams runnerParams;
 AppState state;
 
@@ -19,7 +24,7 @@ int main(int , char *[])
     AboutWindow aboutWindow(&runnerParams);
     UsageWindow usageWindow;
     ToolsWindow toolsWindow(&state);
-    ConsoleWindow consoleWindow;
+    ConsoleWindow consoleWindow(&state);
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "战场兄弟文本提取器";
@@ -30,7 +35,8 @@ int main(int , char *[])
     // before starting it.
     //
     runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsClassic;
-    runnerParams.imGuiWindowParams.tweakedTheme.Tweaks.AlphaMultiplier = 0.5f;
+    runnerParams.imGuiWindowParams.tweakedTheme.Tweaks.AlphaMultiplier = 0.75f;
+
     // ImGui window params
     runnerParams.imGuiWindowParams.defaultImGuiWindowType =
             HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
@@ -39,13 +45,12 @@ int main(int , char *[])
     runnerParams.imGuiWindowParams.showStatusBar = true;
     runnerParams.imGuiWindowParams.showStatus_Fps = false;
     runnerParams.imGuiWindowParams.enableViewports = true;
-    runnerParams.imGuiWindowParams.backgroundColor = {0,0,1,1};
 
     runnerParams.dockingParams.dockingSplits = {
         { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f,
-        // ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
+        ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
         },
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f,},
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f, ImGuiDockNodeFlags_NoUndocking},
     };
     runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiWindowFlags_DockNodeHost;
 
@@ -167,6 +172,8 @@ int main(int , char *[])
 
     // disable dark style
     runnerParams.callbacks.SetupImGuiStyle = HelloImGui::EmptyVoidFunction;
+
+    // setup background image
     runnerParams.callbacks.BeforeImGuiRender = [] {
         auto viewport = ImGui::GetMainViewport();
         auto pos = viewport->Pos;
@@ -178,6 +185,21 @@ int main(int , char *[])
         HelloImGui::ImageFromAsset("loading_screen_02.jpeg", ImVec2(size[0] + 20, size[1] + 20));
         ImGui::End();
         // glClear(GL_COLOR_BUFFER_BIT);
+    };
+
+    // start python daemon after init
+    runnerParams.callbacks.PostInit = [](){
+        start_python_daemon(&state);
+    };
+    // notice python daemon to stop
+    runnerParams.callbacks.BeforeExit = []() {
+        state.appShallExit = true;
+        state.addLog = [](std::string message) {
+            std::cout << message << std::endl;
+        };
+    };
+    runnerParams.callbacks.BeforeExit_PostCleanup = [](){
+        shutdown_python_daemon(&state);
     };
 
     ifd::FileDialog::Instance().CreateTexture = [](uint8_t* data, int w, int h, char fmt) -> void* {

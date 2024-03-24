@@ -1,11 +1,12 @@
 #pragma once
 #include "imgui.h"
 #include "hello_imgui/hello_imgui.h"
+#include "AppState.h"
 
 
 class ConsoleWindow {
     public:
-        ConsoleWindow();
+        ConsoleWindow(AppState *state);
         ~ConsoleWindow();
 
         void ClearLog();
