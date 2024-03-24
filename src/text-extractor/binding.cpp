@@ -35,6 +35,7 @@ void daemon_worker_thread(AppState *state) {
             py::exec(R"(
                 if queues:
                     task = queues.pop(0)
+
             )");
         }
         mtx.unlock();
@@ -47,6 +48,22 @@ void daemon_worker_thread(AppState *state) {
 // start python interpreter and daemon worker
 void start_python_daemon(AppState *state) {
     {
+        putenv("PYTHONIOENCODING=utf-8");
+        // 设置目录
+        const auto pythonRootDir = (state->pythonRootDir).wstring();
+        #ifdef _WIN32
+            const auto pythonHome = pythonRootDir + L"\\lib";
+            const auto pythonPath = pythonRootDir + L"\\python.zip;" + pythonRootDir + L"\\purepython.zip;" pythonRootDir + L"\\;" pythonRootDir + L"\\base_library.zip;";
+        #else
+            const auto pythonHome = pythonRootDir + L"";
+            const auto pythonPath = pythonRootDir + L"/python.zip:" + pythonRootDir + L"/purepython.zip:" + pythonRootDir + L"/base_library.zip";
+        #endif
+        Py_SetProgramName(L"bb-text-extractor");
+        std::wcout << L"pythonPath" << pythonPath << std::endl;
+
+        Py_SetPath(pythonPath.c_str());
+        Py_SetPythonHome(pythonHome.c_str());
+
         guard = std::make_unique<py::scoped_interpreter>();
         // TODO: add meta_path
         // py::module_::import("sys").attr("meta_path").attr("append")();
@@ -59,9 +76,21 @@ void start_python_daemon(AppState *state) {
             globals["queues"] = py::list();
             py::exec(R"(
                 import sys
+                # print(sys.path)
+                # print(sys.version)
+                # print(sys.modules.keys())
+                # for k,v in sys.modules.items():
+                #     if "__file__" in v.__dict__:
+                #         if v.__file__.endswith("py"):
+                #             print(k, v)
                 from memory_importer import physfs, PhysfsImporter
+                import memory_importer
+                print(memory_importer)
 
                 physfs.init()
+                # archive = b""
+                # physfs.mount_memory(archive, "py.zip", "/")
+
                 # TODO: mount libraries to physfs
                 sys.meta_path.append(PhysfsImporter())
             )");
@@ -90,7 +119,14 @@ void dispatch_extractor(AppState *state) {
         mtx.try_lock();
         {
             py::gil_scoped_acquire acquire;
-            py::exec("a = 1");
+            py::dict locals;
+            locals["task"] = py::make_tuple(state->dataDir.string(), state->destDir.string());
+            py::exec(R"(
+                if queues:
+                    addLog("上一个任务尚未完成...")
+                else:
+                    queues.append(task)
+            )", py::globals(), locals);
         }
         mtx.unlock();
     }

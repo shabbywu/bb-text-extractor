@@ -1,21 +1,32 @@
-cmake_minimum_required(VERSION 3.12)
-project(helloworld_with_helloimgui)
+cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 
-# Build hello_imgui
-# =================
-# via vcpkg i/ You can install hello_imgui via vcpkg with: vcpkg install
-# "hello-imgui[opengl3-binding,glfw-binding]" ii/ Then you can use it inside
-# CMake with:
-find_package(hello-imgui CONFIG REQUIRED)
+# Enable Hot Reload for MSVC compilers if supported.
+if(POLICY CMP0141)
+  cmake_policy(SET CMP0141 NEW)
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
+      "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>"
+  )
+endif()
+
+# Enable VCPKG if VCPKG_ROOT defined.
+if(DEFINED ENV{VCPKG_ROOT})
+  set(CMAKE_TOOLCHAIN_FILE
+      "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+      CACHE FILEPATH "")
+endif()
 
 # Build your app
 # ==============
+project(bb-text-extractor)
+
 set(textedit_dir ${CMAKE_CURRENT_LIST_DIR}/external/ImGuiColorTextEdit)
 set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui_markdown)
 set(memory_importer_dir
     ${CMAKE_CURRENT_LIST_DIR}/external/python-memory-importer)
+set(py_scripts_dir ${CMAKE_CURRENT_LIST_DIR}/external/py-scripts)
+set(assets_dir ${CMAKE_CURRENT_LIST_DIR}/assets)
 add_subdirectory(src)
 
 # hello_imgui_add_app is a helper function, similar to cmake's "add_executable"

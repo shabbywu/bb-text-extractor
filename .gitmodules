@@ -13,3 +13,6 @@
 [submodule "external/python-memory-importer"]
     path = external/python-memory-importer
     url = https://github.com/shabbywu/python-memory-importer.git
+[submodule "external/py-scripts"]
+    path = external/py-scripts
+    url = https://github.com/BattleBrothersGameCN/py-scripts.git

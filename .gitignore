@@ -3,3 +3,6 @@ cmake-build-*/
 .DS_Store
 .vscode/
 ___________________________.ini
+*.pyc
+assets/python/
+!assets/python/.gitkeep

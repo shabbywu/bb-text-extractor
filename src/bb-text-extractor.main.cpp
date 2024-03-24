@@ -189,6 +189,7 @@ int main(int , char *[])
 
     // start python daemon after init
     runnerParams.callbacks.PostInit = [](){
+        state.pythonRootDir = HelloImGui::AssetFileFullPath("python", false);
         start_python_daemon(&state);
     };
     // notice python daemon to stop

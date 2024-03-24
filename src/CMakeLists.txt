@@ -13,7 +13,7 @@ file(GLOB sources_bb_text_extractor ${CMAKE_CURRENT_LIST_DIR}/*.h
      ${CMAKE_CURRENT_LIST_DIR}/ui/*.cpp)
 
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
-                    ASSETS_LOCATION ${CMAKE_CURRENT_LIST_DIR}/../assets)
+                    ASSETS_LOCATION ${assets_dir})
 target_link_libraries(bb_text_extractor PUBLIC imgui_utilities source_parse
                                                text_extractor_core)
 target_include_directories(
