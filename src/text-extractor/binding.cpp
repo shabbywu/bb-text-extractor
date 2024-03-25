@@ -5,6 +5,10 @@
 #include <iostream>
 #include <vector>
 #include "binding.h"
+#include <bundle/bb_text_extractor.h>
+#include <bundle/base_library.h>
+#include <bundle/purepython.h>
+#include <bundle/python.h>
 
 using namespace std::chrono_literals;
 namespace py = pybind11;
@@ -32,9 +36,13 @@ void daemon_worker_thread(AppState *state) {
         mtx.lock();
         {
             py::gil_scoped_acquire acquire;
+            auto sys = py::module_::import("sys");
             py::exec(R"(
+                from pathlib import Path
+                from bb_text_extractor import extractor
                 if queues:
-                    task = queues.pop(0)
+                    data_path, dest_path  = queues.pop(0)
+                    extractor.core(Path(data_path), Path(dest_path))
 
             )");
         }
@@ -51,50 +59,59 @@ void start_python_daemon(AppState *state) {
         putenv("PYTHONIOENCODING=utf-8");
         // 设置目录
         const auto pythonRootDir = (state->pythonRootDir).wstring();
-        #ifdef _WIN32
-            const auto pythonHome = pythonRootDir + L"\\lib";
-            const auto pythonPath = pythonRootDir + L"\\python.zip;" + pythonRootDir + L"\\purepython.zip;" pythonRootDir + L"\\;" pythonRootDir + L"\\base_library.zip;";
-        #else
-            const auto pythonHome = pythonRootDir + L"";
-            const auto pythonPath = pythonRootDir + L"/python.zip:" + pythonRootDir + L"/purepython.zip:" + pythonRootDir + L"/base_library.zip";
-        #endif
-        Py_SetProgramName(L"bb-text-extractor");
-        std::wcout << L"pythonPath" << pythonPath << std::endl;
 
+        auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
+        if (!pybaseLibrary.save((state->pythonRootDir / pybaseLibrary.getFileName()).c_str())) {
+            state->addLog("Failed to start daemon worker");
+            return;
+        }
+
+        #ifdef _WIN32
+            auto pythonHome = pythonRootDir + L"\\";
+            auto pythonPath = pythonRootDir + L"\\base_library.zip;";
+        #else
+            auto pythonHome = pythonRootDir + L"/";
+            // auto pythonPath = pythonRootDir + L"/base_library.zip:" + pythonRootDir + L"/python.zip:" + pythonRootDir + L"/purepython.zip";
+            auto pythonPath = pythonRootDir + L"/base_library.zip:";
+        #endif
+
+        Py_SetProgramName(L"bb-text-extractor");
         Py_SetPath(pythonPath.c_str());
-        Py_SetPythonHome(pythonHome.c_str());
 
         guard = std::make_unique<py::scoped_interpreter>();
-        // TODO: add meta_path
-        // py::module_::import("sys").attr("meta_path").attr("append")();
         // ensure python object will release before gil_scoped_release
         {
+            auto physfs = py::module_::import("memory_importer.physfs");
+            physfs.attr("init")();
+
+            auto & purePython = bin2cpp::getPurepythonZipFile();
+            auto purePython_buffer = py::memoryview::from_memory(purePython.getBuffer(), purePython.getSize());
+            std::cout << "mount " << purePython.getFileName() << " to physfs" << std::endl;
+            physfs.attr("mount_memory")(purePython_buffer, purePython.getFileName(), "/");
+
+            auto & core = bin2cpp::getBb_text_extractorZipFile();
+            auto core_buffer = py::memoryview::from_memory(core.getBuffer(), core.getSize());
+            std::cout << "mount " << core.getFileName() << " to physfs" << std::endl;
+            physfs.attr("mount_memory")(core_buffer, core.getFileName(), "/");
+
+            // install memory importer as package finder
+            auto sys = py::module_::import("sys");
+            auto obj = py::module_::import("memory_importer").attr("PhysfsImporter")();
+            // obj.attr("__setattr__")("debug", true);
+            sys.attr("meta_path").attr("append")(obj);
+
+            // // install memory_importer.physfs as physfs
+            sys.attr("modules").attr("__setitem__")("physfs", physfs);
+            py::print(physfs.attr("ls")());
+
+            // register method
             auto globals = py::globals();
             globals["addLog"] = py::cpp_function([state](py::object message) {
                 state->addLog(std::string(py::str(message)));
             });
             globals["queues"] = py::list();
-            py::exec(R"(
-                import sys
-                # print(sys.path)
-                # print(sys.version)
-                # print(sys.modules.keys())
-                # for k,v in sys.modules.items():
-                #     if "__file__" in v.__dict__:
-                #         if v.__file__.endswith("py"):
-                #             print(k, v)
-                from memory_importer import physfs, PhysfsImporter
-                import memory_importer
-                print(memory_importer)
-
-                physfs.init()
-                # archive = b""
-                # physfs.mount_memory(archive, "py.zip", "/")
-
-                # TODO: mount libraries to physfs
-                sys.meta_path.append(PhysfsImporter())
-            )");
         }
+        // release gil for multi-threading
         release = std::make_unique<py::gil_scoped_release>();
     }
 

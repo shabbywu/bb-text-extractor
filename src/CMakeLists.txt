@@ -1,3 +1,5 @@
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 find_package(Freetype REQUIRED)
 find_package(hello-imgui CONFIG REQUIRED)
 include(FindPkgConfig)
