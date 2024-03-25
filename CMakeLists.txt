@@ -26,6 +26,7 @@ set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui_markdown)
 set(memory_importer_dir
     ${CMAKE_CURRENT_LIST_DIR}/external/python-memory-importer)
 set(py_scripts_dir ${CMAKE_CURRENT_LIST_DIR}/external/py-scripts)
+set(nutcracker_dir ${CMAKE_CURRENT_LIST_DIR}/external/NutCracker)
 set(assets_dir ${CMAKE_CURRENT_LIST_DIR}/assets)
 add_subdirectory(src)
 

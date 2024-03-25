@@ -8,18 +8,24 @@
 #include <bundle/bb_text_extractor.h>
 #include <bundle/base_library.h>
 #include <bundle/purepython.h>
-#include <bundle/python.h>
 
 using namespace std::chrono_literals;
 namespace py = pybind11;
 void register_memory_importer(py::module_ &m);
 void register_physfs(py::module_ &m);
+void register_nutcracker(py::module_ &m);
 
 
 PYBIND11_EMBEDDED_MODULE(memory_importer, m) {
     register_memory_importer(m);
     py::module mPhysfs = m.def_submodule("physfs", "physfs lib");
     register_physfs(mPhysfs);
+}
+
+PYBIND11_EMBEDDED_MODULE(_nutcracker, m) {
+    register_nutcracker(m);
+    m.attr("__version__") = "embed";
+    m.attr("__author__") = "shabbywu<shabbywu@qq.com>";
 }
 
 
@@ -42,9 +48,9 @@ void daemon_worker_thread(AppState *state) {
                 from bb_text_extractor import extractor
                 if queues:
                     data_path, dest_path  = queues.pop(0)
+                    extractor.set_log(addLog)
                     extractor.core(Path(data_path), Path(dest_path))
-
-            )");
+            )", py::globals());
         }
         mtx.unlock();
         std::this_thread::sleep_for(100ms);
@@ -71,8 +77,7 @@ void start_python_daemon(AppState *state) {
             auto pythonPath = pythonRootDir + L"\\base_library.zip;";
         #else
             auto pythonHome = pythonRootDir + L"/";
-            // auto pythonPath = pythonRootDir + L"/base_library.zip:" + pythonRootDir + L"/python.zip:" + pythonRootDir + L"/purepython.zip";
-            auto pythonPath = pythonRootDir + L"/base_library.zip:";
+            auto pythonPath = pythonRootDir + L"/base_library.zip:" + pythonRootDir + L":"+ pythonRootDir + L"/lib-dynload:";
         #endif
 
         Py_SetProgramName(L"bb-text-extractor");
@@ -86,12 +91,10 @@ void start_python_daemon(AppState *state) {
 
             auto & purePython = bin2cpp::getPurepythonZipFile();
             auto purePython_buffer = py::memoryview::from_memory(purePython.getBuffer(), purePython.getSize());
-            std::cout << "mount " << purePython.getFileName() << " to physfs" << std::endl;
             physfs.attr("mount_memory")(purePython_buffer, purePython.getFileName(), "/");
 
             auto & core = bin2cpp::getBb_text_extractorZipFile();
             auto core_buffer = py::memoryview::from_memory(core.getBuffer(), core.getSize());
-            std::cout << "mount " << core.getFileName() << " to physfs" << std::endl;
             physfs.attr("mount_memory")(core_buffer, core.getFileName(), "/");
 
             // install memory importer as package finder
@@ -99,10 +102,6 @@ void start_python_daemon(AppState *state) {
             auto obj = py::module_::import("memory_importer").attr("PhysfsImporter")();
             // obj.attr("__setattr__")("debug", true);
             sys.attr("meta_path").attr("append")(obj);
-
-            // // install memory_importer.physfs as physfs
-            sys.attr("modules").attr("__setitem__")("physfs", physfs);
-            py::print(physfs.attr("ls")());
 
             // register method
             auto globals = py::globals();

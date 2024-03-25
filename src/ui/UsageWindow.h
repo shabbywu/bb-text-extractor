@@ -1,4 +1,5 @@
 #pragma once
+#include "hello_imgui/hello_imgui.h"
 
 class UsageWindow
 {
@@ -7,14 +8,12 @@ public:
     void gui();
 
     std::string usage = R"(
-Note: an online playground provided with this manual enables you to test ImGui without any installation:
-* [see a demo](https://youtu.be/FJgObNNmuzo)
-* [launch the playground](https://gitpod.io/#https://github.com/pthom/imgui_manual).
+使用说明:
+1. 设置游戏数据目录 (通常是 X:\Program Files (x86)\Steam\steamapps\common\Battle Brothers\data 目录)
+2. 设置文本提取的输出路径 (例如 X:\Program Files (x86)\Steam\steamapps\common\Battle Brothers\localization\)
+3. 点击「提取文本」
 
-This interactive manual was developed using [Hello ImGui](https://github.com/pthom/hello_imgui), which provided the emscripten port, as well as the assets embedding and image loading. ImGuiManual.cpp gives a good overview of [Hello Imgui API](https://github.com/pthom/hello_imgui/blob/master/src/hello_imgui/hello_imgui_api.md).
+[)" ICON_FA_BELL R"(遇到使用问题, 欢迎反馈!](https://github.com/shabbywu/bb-text-extractor/)
 
-See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_demo.html).
-
-[I'd love to read your feedback!](https://github.com/pthom/imgui_manual/issues/1)
 )";
 };

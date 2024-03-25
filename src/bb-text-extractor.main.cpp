@@ -40,7 +40,7 @@ int main(int , char *[])
     // ImGui window params
     runnerParams.imGuiWindowParams.defaultImGuiWindowType =
             HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
-    runnerParams.imGuiWindowParams.showMenu_View = true;
+    runnerParams.imGuiWindowParams.showMenu_View = false;
     runnerParams.imGuiWindowParams.showMenuBar = true;
     runnerParams.imGuiWindowParams.showStatusBar = true;
     runnerParams.imGuiWindowParams.showStatus_Fps = false;

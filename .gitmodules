@@ -16,3 +16,6 @@
 [submodule "external/py-scripts"]
     path = external/py-scripts
     url = https://github.com/BattleBrothersGameCN/py-scripts.git
+[submodule "external/NutCracker"]
+    path = external/NutCracker
+    url = https://github.com/shabbywu/NutCracker.git
