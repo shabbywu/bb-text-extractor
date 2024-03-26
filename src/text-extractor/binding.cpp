@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 #include <vector>
+#include <mutex>
 #include "binding.h"
 #include <bundle/bb_text_extractor.h>
 #include <bundle/base_library.h>
@@ -67,7 +68,7 @@ void start_python_daemon(AppState *state) {
         const auto pythonRootDir = (state->pythonRootDir).wstring();
 
         auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
-        if (!pybaseLibrary.save((state->pythonRootDir / pybaseLibrary.getFileName()).c_str())) {
+        if (!pybaseLibrary.save((const char*)(state->pythonRootDir / pybaseLibrary.getFileName()).c_str())) {
             state->addLog("Failed to start daemon worker");
             return;
         }

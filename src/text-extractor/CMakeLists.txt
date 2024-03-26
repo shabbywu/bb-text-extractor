@@ -1,9 +1,8 @@
-if(NOT DEFINED Python_EXECUTABLE)
-  find_package(
-    Python3
-    COMPONENTS Development
-    REQUIRED)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+find_package(
+  Python3
+  COMPONENTS Development
+  REQUIRED)
 find_package(pybind11 CONFIG)
 # build memory-importer
 add_subdirectory(${memory_importer_dir} memory-importer)
@@ -33,8 +32,10 @@ file(
   ${python-cppbundle-dir}/purepython.cpp
   ${python-cppbundle-dir}/embedfiles/purepython.h)
 # 解压二进制依赖
-execute_process(COMMAND ${Python3_EXECUTABLE} -m zipfile -e
-                        ${python-zipbundle-dir}/python.zip ${assets_dir}/python)
+execute_process(
+  COMMAND
+    ${Python3_EXECUTABLE} -m zipfile -e ${python-zipbundle-dir}/python.zip
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/assets/python)
 
 add_library(text_extractor_core STATIC ${source_text_extractor})
 target_include_directories(

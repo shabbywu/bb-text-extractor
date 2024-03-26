@@ -1,14 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 set(CMAKE_CXX_STANDARD 17)
 
-# Enable Hot Reload for MSVC compilers if supported.
-if(POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
-      "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>"
-  )
-endif()
-
+set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_LIST_DIR}/.vcpkg/ports/physfs")
+set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_LIST_DIR}/.vcpkg/triplets")
 # Enable VCPKG if VCPKG_ROOT defined.
 if(DEFINED ENV{VCPKG_ROOT})
   set(CMAKE_TOOLCHAIN_FILE
@@ -20,6 +14,7 @@ endif()
 # ==============
 project(bb-text-extractor)
 
+set(CMAKE_BUILD_TYPE "Release")
 set(textedit_dir ${CMAKE_CURRENT_LIST_DIR}/external/ImGuiColorTextEdit)
 set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui_markdown)
