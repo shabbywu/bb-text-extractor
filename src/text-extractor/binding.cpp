@@ -75,9 +75,13 @@ void start_python_daemon(AppState *state) {
         const auto pythonRootDir = (state->pythonRootDir).wstring();
 
         std::cout << "root dir: " << state->pythonRootDir << std::endl;
+        if (!std::filesystem::exists(state->pythonRootDir)) {
+            std::filesystem::create_directories(state->pythonRootDir);
+        }
 
+        auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
+        if (!std::filesystem::exists(state->pythonRootDir / pybaseLibrary.getFileName()))
         {
-            auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
             std::string pybaseLibraryPath = (state->pythonRootDir / pybaseLibrary.getFileName()).string();
             if (!pybaseLibrary.save(pybaseLibraryPath.c_str())) {
                 state->addLog("Failed to start daemon worker");
@@ -85,6 +89,7 @@ void start_python_daemon(AppState *state) {
             }
         }
 
+        if (!std::filesystem::exists(state->pythonRootDir / ".binary.unzip"))
         {
             auto & pythonZip = bin2cpp::getPythonZipFile();
             ZipArchive* zf = ZipArchive::fromBuffer(pythonZip.getBuffer(), pythonZip.getSize());
@@ -105,9 +110,10 @@ void start_python_daemon(AppState *state) {
                 }
             }
             ZipArchive::free(zf);
+
+            std::ofstream f(state->pythonRootDir / ".binary.unzip");
+            f.close();
         }
-
-
 
         #ifdef _WIN32
             auto pythonHome = pythonRootDir + L"\\";

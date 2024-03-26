@@ -14,6 +14,9 @@
 #include "ui/ToolsWindow.h"
 #include "ui/ConsoleWindow.h"
 #include "text-extractor/binding.h"
+#include "assets/fonts/font.h"
+#include "assets/fonts/fontawesome-webfont.h"
+#include "assets/backgrounds/loading_screen_02.h"
 
 using namespace std::chrono_literals;
 HelloImGui::RunnerParams runnerParams;
@@ -62,7 +65,6 @@ int main(int , char *[])
     // Dockable windows definitions
     //
     {
-
         HelloImGui::DockableWindow dock_tools;
         {
             dock_tools.label = "操作面板";
@@ -186,15 +188,38 @@ int main(int , char *[])
         ImGui::SetNextWindowPos(ImVec2(pos[0] - 10, pos[1] - 10));
         ImGui::SetNextWindowSize(ImVec2(size[0] + 20, size[1] + 20));
         ImGui::Begin("Background", NULL, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs);
-        HelloImGui::ImageFromAsset("loading_screen_02.jpeg", ImVec2(size[0] + 20, size[1] + 20));
+        HelloImGui::ImageFromAsset("background.jpeg", ImVec2(size[0] + 20, size[1] + 20));
         ImGui::End();
         // glClear(GL_COLOR_BUFFER_BIT);
     };
 
     // start python daemon after init
     runnerParams.callbacks.PostInit = [](){
-        state.pythonRootDir = HelloImGui::IniFolderLocation(HelloImGui::IniFolderType::AppUserConfigFolder);
-        state.pythonRootDir /= "bb-text-extractor";
+        std::filesystem::path userConfigFolder = HelloImGui::IniFolderLocation(HelloImGui::IniFolderType::AppUserConfigFolder);
+
+        auto appFolder = userConfigFolder / "bb-text-extractor";
+        state.assetsDir = appFolder / "assets";
+        state.pythonRootDir = appFolder / "binary";
+
+        {
+            auto fontsFolder = state.assetsDir / "fonts";
+            if (!std::filesystem::exists(fontsFolder) ) {
+                std::filesystem::create_directories(fontsFolder);
+
+                auto & font = bin2cpp::getFontTtfFile();
+                auto fontFilename = fontsFolder/font.getFileName();
+                font.save(fontFilename.c_str());
+            }
+
+            auto backgroundFilename = state.assetsDir / "background.jpeg";
+            if (!std::filesystem::exists(backgroundFilename)) {
+                auto & file = bin2cpp::getLoading_screen_02JpegFile();
+                auto filename = backgroundFilename;
+                file.save(backgroundFilename.c_str());
+            }
+        }
+
+        HelloImGui::SetAssetsFolder(state.assetsDir.string());
         start_python_daemon(&state);
     };
     // notice python daemon to stop
