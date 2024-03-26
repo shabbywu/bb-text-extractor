@@ -1,0 +1,43 @@
+name: Build-Windows
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'true'
+        token: ${{ secrets.PRIVATE_TOKEN }}
+
+    - uses: lukka/get-cmake@latest
+    # Setup vcpkg: ensures vcpkg is downloaded and built.
+    # Since vcpkg.json is being used later on to install the packages
+    # when `run-cmake` runs, no packages are installed at this time
+    # (and vcpkg does not run).
+    - name: Setup anew (or from cache) vcpkg (and does not build any package)
+      uses: lukka/run-vcpkg@v11 # Always specify the specific _version_ of the
+                                # action you need, `v11` in this case to stay up
+                                # to date with fixes on the v11 branch.
+
+    - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: windows-x86
+        buildPresetAdditionalArgs: "['--config Release']"
+      env:
+        VCPKG_DEFAULT_TRIPLET: "x86-windows"
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: "windows-latest"
+        path: bin/Release/*
+        retention-days: 14
