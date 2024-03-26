@@ -4,10 +4,12 @@ set(CMAKE_CXX_STANDARD 17)
 set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_LIST_DIR}/.vcpkg/ports/physfs")
 set(VCPKG_OVERLAY_TRIPLETS "${CMAKE_CURRENT_LIST_DIR}/.vcpkg/triplets")
 # Enable VCPKG if VCPKG_ROOT defined.
-if(DEFINED ENV{VCPKG_ROOT})
+set(vcpkg "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
+if(NOT CMAKE_TOOLCHAIN_FILE AND EXISTS "${vcpkg}")
   set(CMAKE_TOOLCHAIN_FILE
-      "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-      CACHE FILEPATH "")
+      "${vcpkg}"
+      CACHE FILEPATH "CMake toolchain file")
+  message(STATUS "vcpkg toolchain found: ${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
 # Build your app
