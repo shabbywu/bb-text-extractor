@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "freetype",
+    "glfw3",
     {
       "name": "hello-imgui",
       "features": [
@@ -11,6 +12,6 @@
     "physfs",
     "pybind11",
     "python3",
-    "glfw3"
+    "libzippp"
   ]
 }

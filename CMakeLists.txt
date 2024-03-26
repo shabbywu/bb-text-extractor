@@ -25,6 +25,7 @@ set(memory_importer_dir
 set(py_scripts_dir ${CMAKE_CURRENT_LIST_DIR}/external/py-scripts)
 set(nutcracker_dir ${CMAKE_CURRENT_LIST_DIR}/external/NutCracker)
 set(assets_dir ${CMAKE_CURRENT_LIST_DIR}/assets)
+set(temp_assets_dir ${CMAKE_CURRENT_BINARY_DIR}/temp_assets)
 add_subdirectory(src)
 
 # hello_imgui_add_app is a helper function, similar to cmake's "add_executable"

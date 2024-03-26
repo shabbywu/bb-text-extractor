@@ -30,6 +30,10 @@ int main(int , char *[])
     runnerParams.appWindowParams.windowTitle = "战场兄弟文本提取器";
     runnerParams.appWindowParams.windowGeometry.size = {600, 480};
 
+    // ini file params
+    runnerParams.iniFilename_useAppWindowTitle = true;
+    runnerParams.iniFolderType = HelloImGui::IniFolderType::AppUserConfigFolder;
+
     //
     // Below, we will define all our application parameters and callbacks
     // before starting it.
@@ -118,8 +122,8 @@ int main(int , char *[])
 
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = []() {
-      FontLoader::LoadDefaultFont();
-      MarkdownHelper::LoadFonts();
+        FontLoader::LoadDefaultFont();
+        MarkdownHelper::LoadFonts();
     };
 
     // Set the app menu
@@ -189,7 +193,8 @@ int main(int , char *[])
 
     // start python daemon after init
     runnerParams.callbacks.PostInit = [](){
-        state.pythonRootDir = HelloImGui::AssetFileFullPath("python", false);
+        state.pythonRootDir = HelloImGui::IniFolderLocation(HelloImGui::IniFolderType::AppUserConfigFolder);
+        state.pythonRootDir /= "bb-text-extractor";
         start_python_daemon(&state);
     };
     // notice python daemon to stop

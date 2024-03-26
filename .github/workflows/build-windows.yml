@@ -39,5 +39,5 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: "windows-latest"
-        path: bin/Release/*
+        path: build/Windows/bin
         retention-days: 14

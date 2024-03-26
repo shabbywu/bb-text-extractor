@@ -1,16 +1,23 @@
-#include <pybind11/embed.h>
-#include <Python.h>
 #include <thread>
 #include <chrono>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <mutex>
-#include "binding.h"
+#include <pybind11/embed.h>
+#include <Python.h>
+#include <hello_imgui/hello_imgui.h>
+#include <libzippp.h>
+
 #include <bundle/bb_text_extractor.h>
 #include <bundle/base_library.h>
 #include <bundle/purepython.h>
+#include <bundle/python.h>
+#include "binding.h"
 
 using namespace std::chrono_literals;
+using namespace libzippp;
+
 namespace py = pybind11;
 void register_memory_importer(py::module_ &m);
 void register_physfs(py::module_ &m);
@@ -67,11 +74,40 @@ void start_python_daemon(AppState *state) {
         // 设置目录
         const auto pythonRootDir = (state->pythonRootDir).wstring();
 
-        auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
-        if (!pybaseLibrary.save((const char*)(state->pythonRootDir / pybaseLibrary.getFileName()).c_str())) {
-            state->addLog("Failed to start daemon worker");
-            return;
+        std::cout << "root dir: " << state->pythonRootDir << std::endl;
+
+        {
+            auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
+            std::string pybaseLibraryPath = (state->pythonRootDir / pybaseLibrary.getFileName()).string();
+            if (!pybaseLibrary.save(pybaseLibraryPath.c_str())) {
+                state->addLog("Failed to start daemon worker");
+                return;
+            }
         }
+
+        {
+            auto & pythonZip = bin2cpp::getPythonZipFile();
+            ZipArchive* zf = ZipArchive::fromBuffer(pythonZip.getBuffer(), pythonZip.getSize());
+            auto entries = zf->getEntries();
+            for (auto entry : entries) {
+                if (entry.isFile()) {
+                    auto filename = state->pythonRootDir / entry.getName();
+                    if (!std::filesystem::exists(filename.parent_path())) {
+                        std::filesystem::create_directories(filename.parent_path());
+                    }
+                    int size = entry.getSize();
+                    //the length of binaryData will be given by 'size'
+                    void* binaryData = entry.readAsBinary();
+                    std::ofstream f(filename, std::ios::out | std::ios::binary | std::ios::trunc);
+                    if (f.fail()) continue;
+                    f.write((const char*)binaryData, size);
+                    f.close();
+                }
+            }
+            ZipArchive::free(zf);
+        }
+
+
 
         #ifdef _WIN32
             auto pythonHome = pythonRootDir + L"\\";

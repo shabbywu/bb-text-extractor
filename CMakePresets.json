@@ -1,5 +1,5 @@
 {
-    "version": 3,
+    "version": 5,
     "configurePresets": [
         {
             "name": "default",
@@ -9,6 +9,11 @@
                   "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                   "type": "FILEPATH"
                 }
+            },
+            "condition": {
+              "type": "notEquals",
+              "lhs": "${hostSystemName}",
+              "rhs": "Windows"
             }
         },
         {
@@ -17,8 +22,8 @@
             "displayName": "Windows-X86 Release",
             "description": "This build is only available on Windows",
             "architecture": "Win32",
-          "generator": "Visual Studio 17 2022",
-          "cacheVariables": {
+            "generator": "Visual Studio 17 2022",
+            "cacheVariables": {
             "VCPKG_TARGET_ARCHITECTURE": "x86",
             "CMAKE_BUILD_TYPE": "Release",
             "CMAKE_TOOLCHAIN_FILE": {
@@ -35,5 +40,28 @@
               "rhs": "Windows"
             }
         }
+    ],
+    "buildPresets": [
+      {
+        "name": "default",
+        "configurePreset": "default",
+        "configuration": "Release",
+        "condition": {
+          "type": "notEquals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        }
+      },
+      {
+        "name": "windows-x86",
+        "inherits": "default",
+        "configurePreset": "windows-x86",
+        "configuration": "Release",
+        "condition": {
+          "type": "equals",
+          "lhs": "${hostSystemName}",
+          "rhs": "Windows"
+        }
+      }
     ]
 }

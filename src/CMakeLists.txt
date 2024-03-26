@@ -13,8 +13,14 @@ file(GLOB sources_bb_text_extractor ${CMAKE_CURRENT_LIST_DIR}/*.h
      ${CMAKE_CURRENT_LIST_DIR}/*.cpp ${CMAKE_CURRENT_LIST_DIR}/ui/*.h
      ${CMAKE_CURRENT_LIST_DIR}/ui/*.cpp)
 
+file(COPY "${assets_dir}/app_settings/icon.png"
+     DESTINATION "${temp_assets_dir}/app_settings/")
+file(COPY "${assets_dir}/loading_screen_02.jpeg"
+     DESTINATION "${temp_assets_dir}/")
+file(COPY "${assets_dir}/fonts/font.ttf" DESTINATION "${temp_assets_dir}/fonts")
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
-                    ASSETS_LOCATION ${assets_dir})
+                    ASSETS_LOCATION ${temp_assets_dir})
+
 target_link_libraries(bb_text_extractor PUBLIC imgui_utilities source_parse
                                                text_extractor_core glfw)
 target_include_directories(
