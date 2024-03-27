@@ -5,11 +5,11 @@ all: build
 ifeq ($(OS),Windows_NT)
 build:
 	mkdir -p build
-	cmake --preset=default
-	cmake --build build/Windows --config Release
+	cmake --preset=windows-x86
+	cmake --build --preset=windows-x86
 else
 build:
 	mkdir -p build
 	cmake --preset=default
-	cmake --build build/Darwin --config release -v
+	cmake --build --preset=default
 endif
