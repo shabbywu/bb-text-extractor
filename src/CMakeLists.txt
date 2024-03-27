@@ -45,5 +45,7 @@ function(_hello_imgui_add_windows_icon app_name ico_location)
   target_sources(${app_name} PRIVATE ${icon_rc_file})
 endfunction()
 if(WIN32)
+  target_link_options(bb_text_extractor "/SUBSYSTEM:WINDOWS"
+                      "/ENTRY:mainCRTStartup")
   _hello_imgui_add_windows_icon(bb_text_extractor ${assets_dir}/favicon.ico)
 endif()

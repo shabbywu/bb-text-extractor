@@ -19,3 +19,6 @@
 [submodule "external/NutCracker"]
     path = external/NutCracker
     url = https://github.com/shabbywu/NutCracker.git
+[submodule "external/zip"]
+    path = external/zip
+    url = https://github.com/kuba--/zip.git

@@ -4,12 +4,13 @@ find_package(
   COMPONENTS Development
   REQUIRED)
 find_package(pybind11 CONFIG)
-find_package(libzippp CONFIG REQUIRED)
 # build memory-importer
 add_subdirectory(${memory_importer_dir} memory-importer)
 # build nutcracker
 set(SQUIRREL305 TRUE)
 add_subdirectory(${nutcracker_dir} nutcracker)
+# build zip
+add_subdirectory(${zip_dir} zip)
 
 # pack scripts bundle and move to assets
 set(PACK_BB_TEXT_EXTRACTOR TRUE)
@@ -26,8 +27,12 @@ file(GLOB source_text_extractor binding.cpp binding.h
 
 add_library(text_extractor_core STATIC ${source_text_extractor})
 target_include_directories(
-  text_extractor_core PRIVATE ${PHYSFS_INCLUDE_DIR} ${python-cppbundle-dir}/..)
+  text_extractor_core PRIVATE ${PHYSFS_INCLUDE_DIR} ${python-cppbundle-dir}/..
+                              {zip_dir}/src/)
 target_link_libraries(
-  text_extractor_core
-  PRIVATE pybind11::embed Python3::Python libzippp::libzippp
-          memory-importer-static nutcrackercpp)
+  text_extractor_core PRIVATE pybind11::embed Python3::Python zip
+                              memory-importer-static nutcrackercpp)
+
+if(MSVC)
+  target_compile_options(text_extractor_core PRIVATE /bigobj)
+endif(MSVC)

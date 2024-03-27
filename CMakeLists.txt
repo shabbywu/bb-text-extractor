@@ -24,6 +24,8 @@ set(memory_importer_dir
     ${CMAKE_CURRENT_LIST_DIR}/external/python-memory-importer)
 set(py_scripts_dir ${CMAKE_CURRENT_LIST_DIR}/external/py-scripts)
 set(nutcracker_dir ${CMAKE_CURRENT_LIST_DIR}/external/NutCracker)
+set(zip_dir ${CMAKE_CURRENT_LIST_DIR}/external/zip)
+
 set(assets_dir ${CMAKE_CURRENT_LIST_DIR}/assets)
 set(temp_assets_dir ${CMAKE_CURRENT_BINARY_DIR}/temp_assets)
 add_subdirectory(src)

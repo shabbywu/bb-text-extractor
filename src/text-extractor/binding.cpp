@@ -7,7 +7,8 @@
 #include <pybind11/embed.h>
 #include <Python.h>
 #include <hello_imgui/hello_imgui.h>
-#include <libzippp.h>
+#include <zip.h>
+
 
 #include <bundle/bb_text_extractor.h>
 #include <bundle/base_library.h>
@@ -16,7 +17,6 @@
 #include "binding.h"
 
 using namespace std::chrono_literals;
-using namespace libzippp;
 
 namespace py = pybind11;
 void register_memory_importer(py::module_ &m);
@@ -47,10 +47,8 @@ void daemon_worker_thread(AppState *state) {
     state->addLog("[*] worker daemon started");
     while (!state->appShallExit)
     {
-        mtx.lock();
-        {
+        if (mtx.try_lock()) {
             py::gil_scoped_acquire acquire;
-            auto sys = py::module_::import("sys");
             py::exec(R"(
                 from pathlib import Path
                 from bb_text_extractor import extractor
@@ -59,8 +57,8 @@ void daemon_worker_thread(AppState *state) {
                     extractor.set_log(addLog)
                     extractor.core(Path(data_path), Path(dest_path))
             )", py::globals());
+            mtx.unlock();
         }
-        mtx.unlock();
         std::this_thread::sleep_for(100ms);
     }
     state->addLog("[*] worker daemon exited");
@@ -82,42 +80,24 @@ void start_python_daemon(AppState *state) {
         auto & pybaseLibrary = bin2cpp::getBase_libraryZipFile();
         if (!std::filesystem::exists(state->pythonRootDir / pybaseLibrary.getFileName()))
         {
-            std::string pybaseLibraryPath = (state->pythonRootDir / pybaseLibrary.getFileName()).string();
-            if (!pybaseLibrary.save(pybaseLibraryPath.c_str())) {
-                state->addLog("Failed to start daemon worker");
-                return;
-            }
+            auto pybaseLibraryPath = state->pythonRootDir / pybaseLibrary.getFileName();
+            std::ofstream f(pybaseLibraryPath, std::ios::out | std::ios::binary | std::ios::trunc);
+            if (f.fail()) return;
+            f.write((const char*)pybaseLibrary.getBuffer(), pybaseLibrary.getSize());
+            f.close();
+
         }
 
         if (!std::filesystem::exists(state->pythonRootDir / ".binary.unzip"))
         {
             auto & pythonZip = bin2cpp::getPythonZipFile();
-            ZipArchive* zf = ZipArchive::fromBuffer(pythonZip.getBuffer(), pythonZip.getSize());
-            auto entries = zf->getEntries();
-            for (auto entry : entries) {
-                if (entry.isFile()) {
-                    auto filename = state->pythonRootDir / entry.getName();
-                    if (!std::filesystem::exists(filename.parent_path())) {
-                        std::filesystem::create_directories(filename.parent_path());
-                    }
-                    int size = entry.getSize();
-                    //the length of binaryData will be given by 'size'
-                    void* binaryData = entry.readAsBinary();
-                    std::ofstream f(filename, std::ios::out | std::ios::binary | std::ios::trunc);
-                    if (f.fail()) continue;
-                    f.write((const char*)binaryData, size);
-                    f.close();
-                }
-            }
-            ZipArchive::free(zf);
-
-            std::ofstream f(state->pythonRootDir / ".binary.unzip");
-            f.close();
+            auto c_path = state->pythonRootDir.string().c_str();
+            zip_stream_extract(pythonZip.getBuffer(), pythonZip.getSize(),(const char*)c_path, nullptr, nullptr);
         }
 
         #ifdef _WIN32
             auto pythonHome = pythonRootDir + L"\\";
-            auto pythonPath = pythonRootDir + L"\\base_library.zip;";
+            auto pythonPath = pythonRootDir + L"\\base_library.zip;" + pythonRootDir + L";";
         #else
             auto pythonHome = pythonRootDir + L"/";
             auto pythonPath = pythonRootDir + L"/base_library.zip:" + pythonRootDir + L":"+ pythonRootDir + L"/lib-dynload:";
@@ -175,8 +155,7 @@ void dispatch_extractor(AppState *state) {
     if (state->appShallExit) return;
     try
     {
-        mtx.try_lock();
-        {
+        if(mtx.try_lock()){
             py::gil_scoped_acquire acquire;
             py::dict locals;
             locals["task"] = py::make_tuple(state->dataDir.string(), state->destDir.string());
@@ -186,8 +165,8 @@ void dispatch_extractor(AppState *state) {
                 else:
                     queues.append(task)
             )", py::globals(), locals);
+            mtx.unlock();
         }
-        mtx.unlock();
     }
     catch(const std::exception& e)
     {

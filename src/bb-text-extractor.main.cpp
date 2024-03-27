@@ -1,5 +1,7 @@
 #include <chrono>
 #include <thread>
+#include <iostream>
+#include <fstream>
 
 #include "hello_imgui/hello_imgui.h"
 #include "hello_imgui/hello_imgui_include_opengl.h"
@@ -57,7 +59,7 @@ int main(int , char *[])
         { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f,
         ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
         },
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f, ImGuiDockNodeFlags_NoUndocking},
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f, ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking},
     };
     runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiWindowFlags_DockNodeHost;
 
@@ -208,14 +210,19 @@ int main(int , char *[])
 
                 auto & font = bin2cpp::getFontTtfFile();
                 auto fontFilename = fontsFolder/font.getFileName();
-                font.save(fontFilename.c_str());
+                std::ofstream f(fontFilename, std::ios::out | std::ios::binary | std::ios::trunc);
+                if (f.fail()) return;
+                f.write((const char*)font.getBuffer(), font.getSize());
+                f.close();
             }
 
             auto backgroundFilename = state.assetsDir / "background.jpeg";
             if (!std::filesystem::exists(backgroundFilename)) {
                 auto & file = bin2cpp::getLoading_screen_02JpegFile();
-                auto filename = backgroundFilename;
-                file.save(backgroundFilename.c_str());
+                std::ofstream f(backgroundFilename, std::ios::out | std::ios::binary | std::ios::trunc);
+                if (f.fail()) return;
+                f.write((const char*)file.getBuffer(), file.getSize());
+                f.close();
             }
         }
 
