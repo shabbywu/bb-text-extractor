@@ -29,6 +29,7 @@ jobs:
       with:
         vcpkgJsonGlob: "vcpkg.json"
         vcpkgCommitId: "055721089e8037d4d617250814d11f881e557549"
+        VCPKGCONFIGURATIONJSONGLOB: "vcpkg-configuration.json"
 
 
     - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
