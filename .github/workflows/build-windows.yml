@@ -28,6 +28,8 @@ jobs:
                                 # to date with fixes on the v11 branch.
       with:
         vcpkgJsonGlob: "vcpkg.json"
+        vcpkgCommitId: "055721089e8037d4d617250814d11f881e557549"
+
 
     - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
       uses: lukka/run-cmake@v10
