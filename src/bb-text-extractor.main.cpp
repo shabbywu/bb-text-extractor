@@ -175,7 +175,7 @@ int main(int , char *[])
     // Add some widgets in the status bar
     runnerParams.callbacks.ShowStatus = [] {
         //MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
-        MarkdownHelper::Markdown("战场兄弟文本提取器 - [shabbywu](https://github.com/shabbywu/) - [让战团从拾荣光](https://paratranz.cn/projects/7032)");
+        MarkdownHelper::Markdown("战场兄弟文本提取器 - [shabbywu](https://github.com/shabbywu/) - [参与汉化](https://paratranz.cn/projects/7032)");
     };
 
     // disable dark style

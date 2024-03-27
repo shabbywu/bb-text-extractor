@@ -13,10 +13,10 @@ ImFont *fontH1, *fontH2, *fontH3;
 void LoadFonts()
 {
     std::string fontFilename = "fonts/font.ttf";
-    float fontSizeStep = 4.;
-    fontH3 = HelloImGui::LoadFontTTF_WithFontAwesomeIcons(fontFilename, 14.f + fontSizeStep * 1.f);
-    fontH2 = HelloImGui::LoadFontTTF_WithFontAwesomeIcons(fontFilename, 14.f + fontSizeStep * 2.f);
-    fontH1 = HelloImGui::LoadFontTTF_WithFontAwesomeIcons(fontFilename, 14.f + fontSizeStep * 3.f);
+    float fontSizeStep = 2.;
+    // fontH3 = HelloImGui::LoadFontTTF_WithFontAwesomeIcons(fontFilename, 14.f + fontSizeStep * 1.f, true);
+    fontH2 = HelloImGui::LoadFontTTF(fontFilename, 15.f + fontSizeStep * 2.f, true);
+    fontH1 = HelloImGui::LoadFontTTF(fontFilename, 15.f + fontSizeStep * 3.f, true);
 }
 
 
@@ -48,7 +48,7 @@ ImGui::MarkdownConfig factorMarkdownConfig()
             {
                     {fontH1, true},
                     {fontH2, true},
-                    {fontH3, false}
+                    {NULL, false}
             }
     };
 }

@@ -24,8 +24,8 @@ file(
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${temp_assets_dir})
 
-target_link_libraries(bb_text_extractor PUBLIC imgui_utilities source_parse
-                                               text_extractor_core glfw)
+target_link_libraries(bb_text_extractor PUBLIC glfw imgui_utilities
+                                               source_parse text_extractor_core)
 target_include_directories(
   bb_text_extractor
   PUBLIC ${GLFW3_INCLUDE_DIRS} ${textedit_dir} ${fplus_dir}
@@ -45,7 +45,7 @@ function(_hello_imgui_add_windows_icon app_name ico_location)
   target_sources(${app_name} PRIVATE ${icon_rc_file})
 endfunction()
 if(WIN32)
-  target_link_options(bb_text_extractor "/SUBSYSTEM:WINDOWS"
+  target_link_options(bb_text_extractor PRIVATE "/SUBSYSTEM:WINDOWS"
                       "/ENTRY:mainCRTStartup")
   _hello_imgui_add_windows_icon(bb_text_extractor ${assets_dir}/favicon.ico)
 endif()

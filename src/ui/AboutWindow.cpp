@@ -1,5 +1,6 @@
 #include "hello_imgui/hello_imgui.h"
 #include "imgui_utilities/MarkdownHelper.h"
+#include "imgui_utilities/HyperlinkHelper.h"
 #include "AboutWindow.h"
 
 
@@ -19,8 +20,6 @@ void AboutWindow::gui()
     }
     ImGui::SameLine();
     if (ImGui::Button(ICON_FA_THUMBS_UP " Github 关注")) {
-        HelloImGui::DockableWindow *usageWindow =
-            runnerParams->dockingParams.dockableWindowOfName("使用说明");
-        usageWindow->isVisible = true;
+        HyperlinkHelper::OpenUrl("https://github.com/shabbywu/Battle-Brothers-CN");
     }
 }

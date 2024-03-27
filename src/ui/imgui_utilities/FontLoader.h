@@ -7,7 +7,7 @@ namespace FontLoader {
 
     void LoadDefaultFont()
     {
-        float fontSize = 14.f;
+        float fontSize = 15.f;
         std::string fontFilename = "fonts/font.ttf";
         gDefaultFont = HelloImGui::LoadFontTTF_WithFontAwesomeIcons(fontFilename, fontSize, true);
     }
