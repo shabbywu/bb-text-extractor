@@ -15,6 +15,8 @@
 2. 设置文本提取的输出路径 (例如 X:\Program Files (x86)\Steam\steamapps\common\Battle Brothers\localization\)
 3. 点击「提取文本」
 
+![screenshot](./assets/docs/screenshot.png)
+
 # 导出结果说明
 文本使用 json 格式的存储导出结果, 每个词条为一个 JSON 对象, 具体字段含义如下:
   * key: 唯一键, 等同于 po format 的 msgid

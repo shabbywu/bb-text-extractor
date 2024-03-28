@@ -37,7 +37,7 @@ int main(int , char *[])
 
     // ini file params
     runnerParams.iniFilename_useAppWindowTitle = true;
-    runnerParams.iniFolderType = HelloImGui::IniFolderType::AppUserConfigFolder;
+    runnerParams.iniFolderType = HelloImGui::IniFolderType::AppExecutableFolder;
 
     //
     // Below, we will define all our application parameters and callbacks
@@ -57,9 +57,9 @@ int main(int , char *[])
 
     runnerParams.dockingParams.dockingSplits = {
         { "MainDockSpace", "ConsoleSpace", ImGuiDir_Down, 0.4f,
-        ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
+            ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking | ImGuiDockNodeFlags_NoDockingSplit
         },
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f, ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoUndocking},
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.60f, ImGuiDockNodeFlags_NoUndocking},
     };
     runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiWindowFlags_DockNodeHost;
 
@@ -122,7 +122,7 @@ int main(int , char *[])
         };
     }
 
-    runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiDockNodeFlags_NoDockingSplit;
+    runnerParams.dockingParams.mainDockSpaceNodeFlags = ImGuiDockNodeFlags_NoDockingSplit | ImGuiDockNodeFlags_AutoHideTabBar;
 
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = []() {

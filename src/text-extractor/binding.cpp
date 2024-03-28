@@ -91,8 +91,11 @@ void start_python_daemon(AppState *state) {
         if (!std::filesystem::exists(state->pythonRootDir / ".binary.unzip"))
         {
             auto & pythonZip = bin2cpp::getPythonZipFile();
-            auto c_path = state->pythonRootDir.string().c_str();
-            zip_stream_extract(pythonZip.getBuffer(), pythonZip.getSize(),(const char*)c_path, nullptr, nullptr);
+            auto path = state->pythonRootDir.string();
+            auto c_path = (const char*)path.c_str();
+            zip_stream_extract(pythonZip.getBuffer(), pythonZip.getSize(), c_path, nullptr, nullptr);
+            std::ofstream f(state->pythonRootDir / ".binary.unzip", std::ios::out | std::ios::binary | std::ios::trunc);
+            f.close();
         }
 
         #ifdef _WIN32
