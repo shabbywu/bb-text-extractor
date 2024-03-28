@@ -7,9 +7,9 @@
 void AboutWindow::gui()
 {
     std::string help = R"(
-本工具由战场兄弟中文本地化团队开发 - shabbywu
+本工具由战场兄弟中文本地化团队开发
 
-[如对本工具有任何建议, 欢迎反馈](https://github.com/shabbywu/Battle-Brothers-CN/issues)
+[如对本工具有任何建议, 欢迎反馈](https://github.com/shabbywu/bb-text-extractor/issues)
 
 )";
     MarkdownHelper::Markdown(help.c_str());
@@ -20,6 +20,6 @@ void AboutWindow::gui()
     }
     ImGui::SameLine();
     if (ImGui::Button(ICON_FA_THUMBS_UP " Github 关注")) {
-        HyperlinkHelper::OpenUrl("https://github.com/shabbywu/Battle-Brothers-CN");
+        HyperlinkHelper::OpenUrl("https://github.com/shabbywu/bb-text-extractor");
     }
 }
