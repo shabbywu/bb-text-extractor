@@ -10,7 +10,8 @@ concurrency:
 jobs:
   build:
     runs-on: windows-latest
-
+    env:
+      VCPKG_DEFAULT_TRIPLET: "x86-windows"
     steps:
     - uses: actions/checkout@v4
       with:
@@ -31,9 +32,11 @@ jobs:
         vcpkgJsonGlob: "vcpkg.json"
         VCPKGCONFIGURATIONJSONGLOB: "vcpkg-configuration.json"
 
-    - name: Build
-      run: |
-        make
+    - name: Run CMake consuming CMakePreset.json and run vcpkg to build packages
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: windows-x86
+        buildPreset: windows-x86
 
     - name: Upload artifact
       uses: actions/upload-artifact@v3
