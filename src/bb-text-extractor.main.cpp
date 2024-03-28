@@ -207,13 +207,23 @@ int main(int , char *[])
             auto fontsFolder = state.assetsDir / "fonts";
             if (!std::filesystem::exists(fontsFolder) ) {
                 std::filesystem::create_directories(fontsFolder);
+                {
+                    auto & font = bin2cpp::getFontTtfFile();
+                    auto fontFilename = fontsFolder/font.getFileName();
+                    std::ofstream f(fontFilename, std::ios::out | std::ios::binary | std::ios::trunc);
+                    if (f.fail()) return;
+                    f.write((const char*)font.getBuffer(), font.getSize());
+                    f.close();
+                }
 
-                auto & font = bin2cpp::getFontTtfFile();
-                auto fontFilename = fontsFolder/font.getFileName();
-                std::ofstream f(fontFilename, std::ios::out | std::ios::binary | std::ios::trunc);
-                if (f.fail()) return;
-                f.write((const char*)font.getBuffer(), font.getSize());
-                f.close();
+                {
+                    auto & font = bin2cpp::getFontawesomewebfontTtfFile();
+                    auto fontFilename = fontsFolder/font.getFileName();
+                    std::ofstream f(fontFilename, std::ios::out | std::ios::binary | std::ios::trunc);
+                    if (f.fail()) return;
+                    f.write((const char*)font.getBuffer(), font.getSize());
+                    f.close();
+                }
             }
 
             auto backgroundFilename = state.assetsDir / "background.jpeg";

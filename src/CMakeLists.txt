@@ -6,7 +6,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_subdirectory(ui/imgui_utilities)
-add_subdirectory(ui/source_parse)
+# add_subdirectory(ui/source_parse)
 add_subdirectory(text-extractor)
 
 file(
@@ -24,8 +24,8 @@ file(
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${temp_assets_dir})
 
-target_link_libraries(bb_text_extractor PUBLIC glfw imgui_utilities
-                                               source_parse text_extractor_core)
+target_link_libraries(bb_text_extractor PUBLIC glfw imgui_utilities # source_parse
+                                              text_extractor_core)
 target_include_directories(
   bb_text_extractor
   PUBLIC ${GLFW3_INCLUDE_DIRS} ${textedit_dir} ${fplus_dir}
