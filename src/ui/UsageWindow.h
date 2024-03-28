@@ -45,6 +45,6 @@ public:
 }
 
 ___
-[)" ICON_FA_BELL R"(如遇到使用问题, 欢迎反馈!](https://github.com/shabbywu/bb-text-extractor/issues) | [)" ICON_FA_THUMBS_UP R"( Github 关注](https://github.com/shabbywu/Battle-Brothers-CN)
+[)" ICON_FA_BELL R"(如遇到使用问题, 欢迎反馈!](https://github.com/shabbywu/bb-text-extractor/issues) | [)" ICON_FA_THUMBS_UP R"( Github 关注](https://github.com/shabbywu/bb-text-extractor)
 )";
 };
