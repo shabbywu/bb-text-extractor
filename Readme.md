@@ -58,4 +58,4 @@
 # 使用案例
 - [Battle Brothers(战场兄弟)中文翻译项目](https://github.com/shabbywu/Battle-Brothers-CN)
 
-[📢如遇到使用问题, 欢迎反馈!](https://github.com/shabbywu/bb-text-extractor/issues)
+📢 [如遇到使用问题, 欢迎反馈!](https://github.com/shabbywu/bb-text-extractor/issues)
