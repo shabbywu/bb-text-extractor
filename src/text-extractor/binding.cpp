@@ -19,15 +19,19 @@
 using namespace std::chrono_literals;
 
 namespace py = pybind11;
-void register_memory_importer(py::module_ &m);
-void register_physfs(py::module_ &m);
+namespace memory_importer {
+    void register_memory_importer(py::module_& m);
+    namespace physfs {
+        void register_physfs(py::module_& m);
+    }
+}
 void register_nutcracker(py::module_ &m);
 
 
 PYBIND11_EMBEDDED_MODULE(memory_importer, m) {
-    register_memory_importer(m);
+    memory_importer::register_memory_importer(m);
     py::module mPhysfs = m.def_submodule("physfs", "physfs lib");
-    register_physfs(mPhysfs);
+    memory_importer::physfs::register_physfs(mPhysfs);
 }
 
 PYBIND11_EMBEDDED_MODULE(_nutcracker, m) {

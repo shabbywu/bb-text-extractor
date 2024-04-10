@@ -10,22 +10,35 @@ add_subdirectory(ui/imgui_utilities)
 add_subdirectory(text-extractor)
 
 file(
+  COPY ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/loading_screen_02
+       ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/loading_screen_02.h
+       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/font
+       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/font.h
+       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/fontawesome-webfont
+       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/fontawesome-webfont.h
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets)
+file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/fontawesome-webfont
+     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/fontawesome-webfont.cpp)
+file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/font
+     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/font.cpp)
+file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/loading_screen_02
+     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/loading_screen_02.cpp)
+
+file(
   GLOB
   sources_bb_text_extractor
   ${CMAKE_CURRENT_LIST_DIR}/*.h
   ${CMAKE_CURRENT_LIST_DIR}/*.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ui/*.h
   ${CMAKE_CURRENT_LIST_DIR}/ui/*.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/*.h
-  ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/*.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/*.h
-  ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/*.cpp)
+  ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/*.cpp)
 
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${temp_assets_dir})
 
-target_link_libraries(bb_text_extractor PUBLIC glfw imgui_utilities # source_parse
-                                              text_extractor_core)
+target_link_libraries(
+  bb_text_extractor PUBLIC glfw imgui_utilities # source_parse
+                           text_extractor_core)
 target_include_directories(
   bb_text_extractor
   PUBLIC ${GLFW3_INCLUDE_DIRS} ${textedit_dir} ${fplus_dir}
