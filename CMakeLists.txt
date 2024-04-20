@@ -30,6 +30,13 @@ set(zip_dir ${CMAKE_CURRENT_LIST_DIR}/external/zip)
 
 set(assets_dir ${CMAKE_CURRENT_LIST_DIR}/assets)
 set(temp_assets_dir ${CMAKE_CURRENT_BINARY_DIR}/temp_assets)
+
+# rename all .bin2app to .cpp
+file(GLOB_RECURSE EMBED_CPP "**/*.bin2cpp")
+foreach(filename ${EMBED_CPP})
+  string(REPLACE ".bin2cpp" ".cpp" filename_cpp ${filename})
+  file(COPY_FILE ${filename} ${filename_cpp})
+endforeach()
 add_subdirectory(src)
 
 # hello_imgui_add_app is a helper function, similar to cmake's "add_executable"

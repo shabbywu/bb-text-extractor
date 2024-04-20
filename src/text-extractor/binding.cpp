@@ -69,8 +69,8 @@ void daemon_worker_thread(AppState *state) {
     state->gracefulExit = true;
 }
 
-// start python interpreter and daemon worker
-void start_python_daemon(AppState *state) {
+
+void setup_python(AppState *state) {
     {
         putenv("PYTHONIOENCODING=utf-8");
         // 设置目录
@@ -89,7 +89,6 @@ void start_python_daemon(AppState *state) {
             if (f.fail()) return;
             f.write((const char*)pybaseLibrary.getBuffer(), pybaseLibrary.getSize());
             f.close();
-
         }
 
         if (!std::filesystem::exists(state->pythonRootDir / ".binary.unzip"))
@@ -130,7 +129,7 @@ void start_python_daemon(AppState *state) {
             // install memory importer as package finder
             auto sys = py::module_::import("sys");
             auto obj = py::module_::import("memory_importer").attr("PhysfsImporter")();
-            // obj.attr("__setattr__")("debug", true);
+            obj.attr("__setattr__")("debug", true);
             sys.attr("meta_path").attr("append")(obj);
 
             // register method
@@ -143,7 +142,10 @@ void start_python_daemon(AppState *state) {
         // release gil for multi-threading
         release = std::make_unique<py::gil_scoped_release>();
     }
+}
 
+// start python interpreter and daemon worker
+void start_python_daemon(AppState *state) {
     daemon_thread = std::thread(daemon_worker_thread, state);
 }
 

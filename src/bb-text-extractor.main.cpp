@@ -196,7 +196,7 @@ int main(int , char *[])
     };
 
     // start python daemon after init
-    runnerParams.callbacks.PostInit = [](){
+    runnerParams.callbacks.PostInit_AddPlatformBackendCallbacks = [](){
         std::filesystem::path userConfigFolder = HelloImGui::IniFolderLocation(HelloImGui::IniFolderType::AppUserConfigFolder);
 
         auto appFolder = userConfigFolder / "bb-text-extractor";
@@ -237,8 +237,13 @@ int main(int , char *[])
         }
 
         HelloImGui::SetAssetsFolder(state.assetsDir.string());
+        setup_python(&state);
+    };
+
+    runnerParams.callbacks.PostInit = [](){
         start_python_daemon(&state);
     };
+
     // notice python daemon to stop
     runnerParams.callbacks.BeforeExit = []() {
         state.appShallExit = true;

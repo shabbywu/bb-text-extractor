@@ -7,3 +7,4 @@ ___________________________.ini
 *.pyc
 assets/python/
 !assets/python/.gitkeep
+bin

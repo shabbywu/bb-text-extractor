@@ -1,4 +1,4 @@
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
 find_package(Freetype REQUIRED)
 find_package(hello-imgui CONFIG REQUIRED)
@@ -6,23 +6,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_subdirectory(ui/imgui_utilities)
-# add_subdirectory(ui/source_parse)
 add_subdirectory(text-extractor)
-
-file(
-  COPY ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/loading_screen_02
-       ${CMAKE_CURRENT_LIST_DIR}/assets/backgrounds/loading_screen_02.h
-       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/font
-       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/font.h
-       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/fontawesome-webfont
-       ${CMAKE_CURRENT_LIST_DIR}/assets/fonts/fontawesome-webfont.h
-  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets)
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/fontawesome-webfont
-     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/fontawesome-webfont.cpp)
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/font
-     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/font.cpp)
-file(RENAME ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/loading_screen_02
-     ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/loading_screen_02.cpp)
 
 file(
   GLOB
@@ -31,7 +15,7 @@ file(
   ${CMAKE_CURRENT_LIST_DIR}/*.cpp
   ${CMAKE_CURRENT_LIST_DIR}/ui/*.h
   ${CMAKE_CURRENT_LIST_DIR}/ui/*.cpp
-  ${CMAKE_CURRENT_BINARY_DIR}/cpp-assets/*.cpp)
+  ${CMAKE_CURRENT_LIST_DIR}/assets/*/*.cpp)
 
 hello_imgui_add_app(bb_text_extractor ${sources_bb_text_extractor}
                     ASSETS_LOCATION ${temp_assets_dir})
