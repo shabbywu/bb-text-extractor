@@ -1,4 +1,29 @@
 #include "ConsoleWindow.h"
+#include <string>
+#include <map>
+
+
+static std::map<std::string, std::map<std::string, std::string>> literals = {
+    {
+        "cn", {
+            {"Terminal", "终端"},
+            {"Optional", "选项"},
+            {"Auto scroll", "自动滚屏"},
+            {"filter-message", "过滤 (\".nut\") (\".cnut\")"},
+            {"Clear", "清空"}
+        },
+    },
+    {
+        "en", {
+            {"Terminal", "终端"},
+            {"Optional", "Optional"},
+            {"Auto scroll", "Auto scroll"},
+            {"filter-message", "Filter (\".nut\") (\".cnut\")"},
+            {"Clear", "Clear"}
+        },
+
+    }
+};
 
 
 ConsoleWindow::ConsoleWindow(AppState *state) {
@@ -47,29 +72,29 @@ void ConsoleWindow::AddLog(const char* fmt, ...) IM_FMTARGS(2)
 }
 
 
-void ConsoleWindow::gui(const char* title, bool* p_open)
+void ConsoleWindow::gui(std::string lang, bool* p_open)
 {
     ImGui::SetNextWindowSize(ImVec2(520, 600), ImGuiCond_FirstUseEver);
-    if (!ImGui::Begin(title, p_open))
+    if (!ImGui::Begin(literals[lang]["Terminal"].c_str(), p_open))
     {
         ImGui::End();
         return;
     }
 
-    if (ImGui::Button("清空")) { ClearLog(); }
+    if (ImGui::Button(literals[lang]["Clear"].c_str())) { ClearLog(); }
     ImGui::SameLine();
     // Options menu
-    if (ImGui::BeginPopup("选项"))
+    if (ImGui::BeginPopup(literals[lang]["Optional"].c_str()))
     {
-        ImGui::Checkbox("自动滚屏", &AutoScroll);
+        ImGui::Checkbox(literals[lang]["Auto scroll"].c_str(), &AutoScroll);
         ImGui::EndPopup();
     }
 
     // Options, Filter
-    if (ImGui::Button("选项"))
-        ImGui::OpenPopup("选项");
+    if (ImGui::Button(literals[lang]["Optional"].c_str()))
+        ImGui::OpenPopup(literals[lang]["Optional"].c_str());
     ImGui::SameLine();
-    Filter.Draw("过滤 (\".nut\") (\".cnut\")", 180);
+    Filter.Draw(literals[lang]["filter-message"].c_str(), 180);
     ImGui::Separator();
 
     // Reserve enough left-over height for 1 separator + 1 input text
@@ -78,7 +103,7 @@ void ConsoleWindow::gui(const char* title, bool* p_open)
     {
         if (ImGui::BeginPopupContextWindow())
         {
-            if (ImGui::Selectable("清空")) ClearLog();
+            if (ImGui::Selectable(literals[lang]["Clear"].c_str())) ClearLog();
             ImGui::EndPopup();
         }
 

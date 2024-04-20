@@ -53,14 +53,25 @@ void daemon_worker_thread(AppState *state) {
     {
         if (mtx.try_lock()) {
             py::gil_scoped_acquire acquire;
-            py::exec(R"(
-                from pathlib import Path
-                from bb_text_extractor import extractor
-                if queues:
-                    data_path, dest_path  = queues.pop(0)
-                    extractor.set_log(addLog)
-                    extractor.core(Path(data_path), Path(dest_path))
-            )", py::globals());
+            py::dict locals;
+            locals["lang"] = state->lang;
+            try
+            {
+                py::exec(R"(
+                    from pathlib import Path
+                    from bb_text_extractor import extractor
+                    from bb_text_extractor.utils import set_lang
+                    if queues:
+                        set_lang(lang)
+                        data_path, dest_path  = queues.pop(0)
+                        extractor.set_log(addLog)
+                        extractor.core(Path(data_path), Path(dest_path))
+                )", py::globals(), locals);
+            }
+            catch(const py::error_already_set& e)
+            {
+                state->addLog(e.what());
+            }
             mtx.unlock();
         }
         std::this_thread::sleep_for(100ms);
@@ -129,7 +140,7 @@ void setup_python(AppState *state) {
             // install memory importer as package finder
             auto sys = py::module_::import("sys");
             auto obj = py::module_::import("memory_importer").attr("PhysfsImporter")();
-            obj.attr("__setattr__")("debug", true);
+            // obj.attr("__setattr__")("debug", true);
             sys.attr("meta_path").attr("append")(obj);
 
             // register method

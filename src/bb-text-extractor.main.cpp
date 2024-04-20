@@ -33,7 +33,7 @@ int main(int , char *[])
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "战场兄弟文本提取器";
-    runnerParams.appWindowParams.windowGeometry.size = {600, 480};
+    runnerParams.appWindowParams.windowGeometry.size = {800, 640};
 
     // ini file params
     runnerParams.iniFilename_useAppWindowTitle = true;
@@ -87,7 +87,7 @@ int main(int , char *[])
             dock_console.includeInViewMenu = false;
             dock_console.canBeClosed = false;
             dock_console.rememberIsVisible = false;
-            dock_console.GuiFunction = [&consoleWindow, &dock_console] { consoleWindow.gui("终端", &dock_console.isVisible); };
+            dock_console.GuiFunction = [&consoleWindow, &dock_console] { consoleWindow.gui(state.lang, &dock_console.isVisible); };
             dock_console.callBeginEnd = true;
         };
 
@@ -97,7 +97,7 @@ int main(int , char *[])
             dock_usage.dockSpaceName = "CodeSpace";
             dock_usage.isVisible = false;
             dock_usage.includeInViewMenu = false;
-            dock_usage.GuiFunction = [&usageWindow] { usageWindow.gui(); };
+            dock_usage.GuiFunction = [&usageWindow] { usageWindow.gui(state); };
             dock_usage.callBeginEnd = true;
         };
 
@@ -107,7 +107,7 @@ int main(int , char *[])
             dock_about.dockSpaceName = "CodeSpace";
             dock_about.isVisible = true;
             dock_about.includeInViewMenu = false;
-            dock_about.GuiFunction = [&aboutWindow] { aboutWindow.gui(); };
+            dock_about.GuiFunction = [&aboutWindow] { aboutWindow.gui(state); };
             dock_about.callBeginEnd = true;
         };
 
@@ -135,8 +135,13 @@ int main(int , char *[])
         HelloImGui::DockableWindow *consoleWindow =
             runnerParams.dockingParams.dockableWindowOfName("终端");
         if (!consoleWindow->isVisible) {
-            if (ImGui::MenuItem("打开终端"))
-                consoleWindow->isVisible = true;
+            if (state.lang == "cn") {
+                if (ImGui::MenuItem("打开终端"))
+                    consoleWindow->isVisible = true;
+            } else {
+                if (ImGui::MenuItem("Open terminal"))
+                    consoleWindow->isVisible = true;
+            }
         }
     };
 
@@ -148,34 +153,74 @@ int main(int , char *[])
         HelloImGui::DockableWindow *usageWindow =
             runnerParams.dockingParams.dockableWindowOfName("使用说明");
 
-        if (ImGui::BeginMenu("链接"))
-        {
-            ImGui::TextDisabled("链接");
-            if (ImGui::MenuItem("汉化项目主仓库"))
-                HyperlinkHelper::OpenUrl("https://github.com/shabbywu/Battle-Brothers-CN");
-            if (ImGui::MenuItem("汉化项目协同网站"))
-                HyperlinkHelper::OpenUrl("https://paratranz.cn/projects/7032");
-            if (ImGui::MenuItem("战场兄弟汉化发布"))
-                HyperlinkHelper::OpenUrl("https://battle-brothers-cn.shabbywu.cn/");
-            ImGui::EndMenu();
+        if (state.lang == "cn") {
+            if (ImGui::BeginMenu("链接"))
+            {
+                ImGui::TextDisabled("链接");
+                if (ImGui::MenuItem("汉化项目主仓库"))
+                    HyperlinkHelper::OpenUrl("https://github.com/shabbywu/Battle-Brothers-CN");
+                if (ImGui::MenuItem("汉化项目协同网站"))
+                    HyperlinkHelper::OpenUrl("https://paratranz.cn/projects/7032");
+                if (ImGui::MenuItem("战场兄弟汉化发布"))
+                    HyperlinkHelper::OpenUrl("https://battle-brothers-cn.shabbywu.cn/");
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("关于")) {
+                if (ImGui::MenuItem("关于本工具"))
+                    aboutWindow->isVisible = true;
+                if (ImGui::MenuItem("使用说明"))
+                    usageWindow->isVisible = true;
+                if (ImGui::MenuItem("作者"))
+                    HyperlinkHelper::OpenUrl("https://github.com/shabbywu/");
+                // if (ImGui::MenuItem("致谢"))
+                //     acknowledgmentWindow->isVisible = true;
+                ImGui::EndMenu();
+            }
+        } else {
+            if (ImGui::BeginMenu("Link"))
+            {
+                ImGui::TextDisabled("Link");
+                if (ImGui::MenuItem("Battle-Brothers-CN Project"))
+                    HyperlinkHelper::OpenUrl("https://github.com/shabbywu/Battle-Brothers-CN");
+                if (ImGui::MenuItem("Chinese Collaborative Website "))
+                    HyperlinkHelper::OpenUrl("https://paratranz.cn/projects/7032");
+                if (ImGui::MenuItem("Chinese Transaltion Release"))
+                    HyperlinkHelper::OpenUrl("https://battle-brothers-cn.shabbywu.cn/");
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("About")) {
+                if (ImGui::MenuItem("About this tool"))
+                    aboutWindow->isVisible = true;
+                if (ImGui::MenuItem("Usage"))
+                    usageWindow->isVisible = true;
+                if (ImGui::MenuItem("Author"))
+                    HyperlinkHelper::OpenUrl("https://github.com/shabbywu/");
+                // if (ImGui::MenuItem("致谢"))
+                //     acknowledgmentWindow->isVisible = true;
+                ImGui::EndMenu();
+            }
         }
-        if (ImGui::BeginMenu("关于")) {
-            if (ImGui::MenuItem("关于本工具"))
-                aboutWindow->isVisible = true;
-            if (ImGui::MenuItem("使用说明"))
-                usageWindow->isVisible = true;
-            if (ImGui::MenuItem("作者"))
-                HyperlinkHelper::OpenUrl("https://github.com/shabbywu/");
-            // if (ImGui::MenuItem("致谢"))
-            //     acknowledgmentWindow->isVisible = true;
-            ImGui::EndMenu();
+
+
+        if (ImGui::Button("EN/中")) {
+            if (state.lang == "en") {
+                state.lang = "cn";
+                runnerParams.appWindowParams.windowTitle = "战场兄弟文本提取器";
+            } else {
+                state.lang = "en";
+                runnerParams.appWindowParams.windowTitle = "Battle Brothers Text Extractor";
+            }
+
         }
     };
 
     // Add some widgets in the status bar
     runnerParams.callbacks.ShowStatus = [] {
-        //MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
-        MarkdownHelper::Markdown("战场兄弟文本提取器 - [shabbywu](https://github.com/shabbywu/) - [参与汉化](https://paratranz.cn/projects/7032)");
+        if (state.lang == "cn") {
+            MarkdownHelper::Markdown("战场兄弟文本提取器 - [shabbywu](https://github.com/shabbywu/) - [参与汉化](https://paratranz.cn/projects/7032)");
+        } else {
+            MarkdownHelper::Markdown("Battle Brothers Text Extractor - [shabbywu](https://github.com/shabbywu/) - [Join](https://paratranz.cn/projects/7032)");
+        }
     };
 
     // disable dark style

@@ -2,7 +2,11 @@
 #include "UsageWindow.h"
 
 
-void UsageWindow::gui()
+void UsageWindow::gui(AppState& state)
 {
-    MarkdownHelper::Markdown(usage.c_str());
+    if (state.lang == "cn") {
+        MarkdownHelper::Markdown(usageCN.c_str());
+    } else {
+        MarkdownHelper::Markdown(usageEN.c_str());
+    }
 }

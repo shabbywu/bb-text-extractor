@@ -22,7 +22,7 @@ class ConsoleWindow {
         // TextEdit callback
         int TextEditCallback(ImGuiInputTextCallbackData* data);
 
-        void gui(const char* title, bool* p_open);
+        void gui(std::string lang, bool* p_open);
 
         char                  InputBuf[256];
         ImVector<char*>       Items;

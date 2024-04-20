@@ -9,6 +9,7 @@ public:
 
     std::filesystem::path dataDir;
     std::filesystem::path destDir;
+    std::string lang = "cn";
 
     std::function<void(std::string)> addLog;
 
